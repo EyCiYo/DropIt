@@ -1,0 +1,155 @@
+*,
+*::before,
+*::after{
+    box-sizing: border-box;
+}
+:root{
+    --dark-blue: #0d6efd;
+    
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.sub-text{
+    color: #525050;
+}
+*{
+    margin: 0;
+    padding: 0;
+    /* border: 1px red solid; */
+    /* font-family:Verdana, Geneva, Tahoma, sans-serif */
+}
+.text-overflow{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.navbtn a{
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+body{
+    /* background: var(--bodybg); */
+    width: 100%;
+    /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+    font-family: "Archivo",sans-serif;
+    overflow-x: hidden;
+}
+.logo{
+    padding: 0rem;
+    width: 150px;
+}
+.hr{
+    border: 1px solid black;
+}
+.nav-bar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    font-weight: 500;
+    box-sizing: border-box;
+    /* background-color: white; */
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    user-select: none;
+}
+
+.nav-right{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    justify-self: end;
+    gap:0.25rem;
+}
+
+.navbtn{
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+}
+.support-btn,
+.services-btn{
+    position: relative;
+    z-index: 1;
+}
+.login-btn{
+    position: relative;
+    /* display: inline-block; */
+    transition: all 0.08s ease-in;
+    z-index: 1;
+    margin-left: 1rem;
+    background-color: var(--dark-blue);
+    color: white;
+}
+.login-dropdown,
+.support-dropdown,
+.services-dropdown{
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 99;
+    border-radius: 0 0 0.5rem 0.5rem;
+    top:2rem;
+    right: 1px;
+    padding: 0.5rem;
+}
+/* .support-dropdown{
+    display: none;
+    position: absolute;
+    background-color: #dec9b1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 99;
+    border-radius: 0 0 0.5rem 0.5rem;
+    top:2rem;
+    left: 1px;
+    padding: 0.5rem;
+} */
+.login-chevron,
+.support-chevron,
+.services-chevron{
+    transition: transform 0.3s ease-in-out;
+}
+.chevron-rotate{
+    transform: rotate(180deg);
+}
+.login-item{
+    color: black;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 1rem;
+    padding: 0.25rem 0.5rem;
+    
+}
+.login-list{
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 500;
+    color: black;
+}
