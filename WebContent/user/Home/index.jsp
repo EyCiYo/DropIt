@@ -38,7 +38,7 @@
             <div class="tracking-container">
                 <div class="tracking-form">
                     <h1>Track your <span style="color: var(--primary-emp-text);">order</span></h1>
-                    <form action="../../HomeTrack" name="track-form" >
+                    <form action="../../TrackParcel" name="track-form" method="post">
                         <div class="input-data">
                             <input type="text" name="tracking-id" id="tracking-id" placeholder="Enter your Tracking Id" required>
                         </div>

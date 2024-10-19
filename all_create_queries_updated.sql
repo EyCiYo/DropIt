@@ -58,6 +58,7 @@ INSERT INTO tbl_Booking (
  'Express', 'Fragile', '2024-10-19', '2024-10-21',
  '2024-10-17', 2500.00, 'In Transit');
  
- UPDATE TBL_BOOKING SET PAR_STATUS ='Booked' where booking_id = 'BKNO_a1B2c3D4';
- UPDATE TBL_BOOKING SET PAR_STATUS ='In Transit' where booking_id = 'BKNO_f5G6h7I8';
+ SELECT * FROM TBL_BOOKING;
+ 
+ select Par_Status,Par_DropoffTime,Par_BookingTime from tbl_Booking where Booking_ID = 'BKNO_a1B2c3D4' and Sender_Email = 'aloha@gmail.com';
  

@@ -19,11 +19,13 @@ import dao.BookingDao;
 @WebServlet("/HomeTrack")
 public class HomeTrack extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	System.Logger logger = System.getLogger("error");
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String bookingid = request.getParameter("tracking-id");
-		String email = request.getParameter("email-id");
+		String email = request.getParameter("email");
 		RequestDispatcher rd = request.getRequestDispatcher("./hometracking.jsp");
+		
 		BookingDao bd = new BookingDao();
 		
 		try {
@@ -40,13 +42,16 @@ public class HomeTrack extends HttpServlet {
 			}
 			else {
 				request.setAttribute("errorMessage", "No booking found with this ID");
+				request.setAttribute("tracking-id", bookingid);
+				request.setAttribute("email", email);
+				rd = request.getRequestDispatcher("./index.jsp");
 				rd.forward(request, response);
 			}
 		} catch (Exception e) {
-			System.getLogger(e.getMessage());
+			logger.log(System.Logger.Level.INFO, e.getMessage());
 		}
 		finally {
-			System.getLogger("Completed tracking");
+			logger.log(System.Logger.Level.INFO,"Completed tracking");
 		}
 	}
 

@@ -27,6 +27,7 @@ public class TrackParcel extends HttpServlet {
 			HttpSession session = request.getSession(false);
 			String email = (String) session.getAttribute("username");
 			RequestDispatcher rd = request.getRequestDispatcher("./user/Tracking/index.jsp");
+			System.out.println("In track parcel dopost:"+bid+email);
 			BookingDao bd = new BookingDao();
 			
 			try {

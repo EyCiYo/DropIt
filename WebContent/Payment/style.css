@@ -7,6 +7,15 @@
     --bodybg: #e1e1e1;
     --dark-blue: #0d6efd;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
 
 *{
     margin: 0;
@@ -113,4 +122,20 @@ button:hover,
 .card-form input {
     padding: 10px;
     margin-bottom: 10px;
+    border-radius:0.5rem;
+    border: 1px solid rgb(179, 179, 179);
+    font-size: 20px;
+    text-align: center;
 }
+
+.cardnumber{
+    display:flex;
+    flex-direction:row;
+    align-items: center;
+    justify-content: space-between;
+}
+.cardnumber input{
+	max-width: 100px;
+	margin:0;
+}
+

@@ -15,6 +15,19 @@
 	rel="stylesheet">
 </head>
 <body>
+    <%
+    session = request.getSession(false);
+    if(session!=null){
+    	if(session.getAttribute("username")!=null){
+    		if(session.getAttribute("role").equals("user")){
+    			response.sendRedirect("./user/Home/index.jsp");
+    		}
+    		else if(session.getAttribute("role").equals("admin")){
+    			response.sendRedirect("./admin/Home/index.jsp");
+    		}
+    	}
+    }
+    %>
 	<style>
 		.tracking-bg{
 		    background-image: linear-gradient(90deg,rgba(0, 0, 0, 0.842), rgba(139, 139, 139, 0.267)),url('${pageContext.request.contextPath}/resources/homepage.jpg');
@@ -154,13 +167,15 @@
 					<h1>
 						Track your <span style="color: var(--primary-emp-text);">order</span>
 					</h1>
-					<form name="track-form" method="post" action="HomeTrack">
+					<form name="track-form" method="post" action="./HomeTrack">
 						<div class="input-data">
 							<input type="text" name="tracking-id" id="tracking-id"
-								placeholder="Enter your Tracking Id" required> 
+								placeholder="Enter your Tracking Id" 
+								value="<%=request.getAttribute("tracking-id")!=null?request.getAttribute("tracking-id"):"" %>" required> 
 							<input
 								type="email" name="email" id="email"
-								placeholder="Enter your Email Id" required>
+								placeholder="Enter your Email Id" 
+								value="<%=request.getAttribute("email")!=null?request.getAttribute("email"):"" %>" required>
 						</div>
 						<div class="track-btn">
 							<button type="submit">
@@ -175,6 +190,11 @@
 							</button>
 						</div>
 					</form>
+					<%
+					   String err = (String)request.getAttribute("errorMessage");
+					   if(err != null){%>
+					   <script>alert("<%=err%>");</script>
+					<%}%>
 				</div>
 				
 			</div>

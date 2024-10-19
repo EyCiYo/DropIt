@@ -29,6 +29,7 @@ public class BookParcel extends HttpServlet {
 			throws ServletException, IOException {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
+		System.Logger logger = System.getLogger("error");
 
 		// Retrieve sender information
 		String senderName = request.getParameter("sendername");
@@ -76,7 +77,7 @@ public class BookParcel extends HttpServlet {
 			pickupDate = dateFormat.parse(request.getParameter("pickup-date"));
 			dropDate = dateFormat.parse(request.getParameter("drop-date")); // For dropoff date
 		} catch (ParseException e) {
-			System.getLogger(e.getMessage());
+			logger.log(System.Logger.Level.ERROR,e.getMessage());
 		}
 
 		// Status set to "Booked" when a new booking is created
@@ -112,7 +113,7 @@ public class BookParcel extends HttpServlet {
 		String err=bd.processBooking(booking);
 		
 		if(!err.equals("Success")) {
-			System.getLogger("Error in validation");
+			logger.log(System.Logger.Level.ERROR,"Error in validation");
 			request.setAttribute("errorMessage", err);
 			RequestDispatcher rd = request.getRequestDispatcher("./user/Booking/index.jsp");
 			rd.forward(request, response);
@@ -122,8 +123,12 @@ public class BookParcel extends HttpServlet {
 		String bid = null;
 		try {
 			bid = bd.createNewBooking(booking);
+			logger.log(System.Logger.Level.INFO, "Booking created. Redirecting to payment....");
+			request.setAttribute("bookingid", bid);
+			RequestDispatcher rd = request.getRequestDispatcher("./Payment/index.jsp");
+			rd.forward(request, response);
 		} catch (ClassNotFoundException e) {
-			System.getLogger(e.getMessage());
+			logger.log(System.Logger.Level.INFO,e.getMessage());
 		}
 	}
 

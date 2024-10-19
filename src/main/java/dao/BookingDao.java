@@ -9,6 +9,8 @@ import java.util.*;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
@@ -16,7 +18,7 @@ public class BookingDao {
 	Random rd = new Random();
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
 			Pattern.CASE_INSENSITIVE);
-
+	System.Logger logger = System.getLogger("error");
 	// Main validation logic
 	public String processBooking(Booking obj) {
 		// Retrieve and validate sender information
@@ -143,16 +145,16 @@ public class BookingDao {
 				rowcount++;
 			}
 			if (rowcount > 0) {
-				System.getLogger("Fetched Previous Booking data: " + rowcount);
+				logger.log(System.Logger.Level.INFO,"Fetched Previous Booking data: " + rowcount);
 			} else {
 				arr = null;
-				System.getLogger("Error in fetching Previous Booking data");
+				logger.log(System.Logger.Level.ERROR,"Error in fetching Previous Booking data");
 			}
 
 			conn.close();
 			st.close();
 		} catch (Exception e) {
-			System.getLogger(e.getMessage());
+			logger.log(System.Logger.Level.WARNING,e.getMessage());
 		}
 
 		return arr;
@@ -162,25 +164,29 @@ public class BookingDao {
 		Connect_jdbc cj = new Connect_jdbc();
 		Connection conn = cj.connected();
 		Booking match = new Booking();
+		System.out.println(bid+email);
 		String sql = "select Par_Status,Par_DropoffTime,Par_BookingTime from tbl_Booking where Booking_ID = ? and Sender_Email = ?";
 		try {
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setString(1, bid);
 			st.setString(2, email);
 			ResultSet rs = st.executeQuery();
+		 
 			if (rs.next()) {
 				match.setStatus(rs.getString("Par_Status"));
 				match.setDropoffDate(rs.getDate("Par_DropoffTime"));
 				match.setBookingDate(rs.getDate("Par_BookingTime"));
 				match.setBookingId(bid);
+				logger.log(System.Logger.Level.INFO,"Match Found");
 			} else {
 				match = null;
+				logger.log(System.Logger.Level.ERROR,"No match found");
 			}
 			conn.close();
 			st.close();
-			System.getLogger("Clossed connection");
+			logger.log(System.Logger.Level.INFO,"Clossed connection");
 		} catch (Exception e) {
-			System.getLogger(e.getMessage());
+			logger.log(System.Logger.Level.WARNING,e.getMessage());
 		}
 
 		return match;
@@ -200,7 +206,7 @@ public class BookingDao {
 		Map<String, Double> costSpeed = Map.of("standard", 1.0, "express", 1.5, "business", 2.0);
 
 		Map<String, Integer> costPackage = Map.of("standard", 10, "eco", 25, "custom", 40, "fragile", 50);
-		// Basic cost factors (these can be adjusted as needed)
+		// Basic cost factors 
 		int costPerKg = 50; // base cost per kg
 		double costPerCubicCm = 0.02; // base cost per cubic cm
 		// Total cost calculation
@@ -249,17 +255,123 @@ public class BookingDao {
 			if (rowcount > 0) {
 				rbid = bid;
 			} else {
-				System.getLogger("Booking data not inserted");
+				logger.log(System.Logger.Level.ERROR,"Booking data not inserted");
 			}
 			conn.close();
 			ps.close();
 			chk.close();
 			chkrs.close();
 		} catch (Exception e) {
-			System.getLogger(e.getMessage());
+			logger.log(System.Logger.Level.WARNING,e.getMessage());
 		}
-
 		return rbid;
-
 	}
+	
+	public Booking getBookingDetails(String bookingId) throws ClassNotFoundException {
+	    Connect_jdbc cj = new Connect_jdbc();
+	    Connection conn = cj.connected();
+	    Booking booking = null;
+	    
+	    String sql = "SELECT Sender_Email, Rec_Name, Rec_Address, Rec_Mobile, Rec_Email, Par_Length, Par_Height, Par_Width, " +
+	                 "Par_Weight_Gram, Par_Contents_Description, Par_Shipping_Speed, Par_Packing_Type, Par_PickupTime, " +
+	                 "Par_DropoffTime, Par_BookingTime, Par_Cost, Par_Status FROM tbl_Booking WHERE booking_id = ?";
+	    
+	    try {
+	        PreparedStatement ps = conn.prepareStatement(sql);
+	        ps.setString(1, bookingId);
+	        
+	        ResultSet rs = ps.executeQuery();
+	        
+	        if (rs.next()) {
+	            // If booking is found, populate the Booking object with the data
+	            booking = new Booking();
+	            booking.setSenderEmail(rs.getString("Sender_Email"));
+	            booking.setReceiverName(rs.getString("Rec_Name"));
+	            booking.setReceiverAddress(rs.getString("Rec_Address"));
+	            booking.setReceiverMobile(rs.getString("Rec_Mobile"));
+	            booking.setReceiverEmail(rs.getString("Rec_Email"));
+	            booking.setLength(rs.getDouble("Par_Length"));
+	            booking.setHeight(rs.getDouble("Par_Height"));
+	            booking.setWidth(rs.getDouble("Par_Width"));
+	            booking.setWeight(rs.getDouble("Par_Weight_Gram"));
+	            booking.setContentDescription(rs.getString("Par_Contents_Description"));
+	            booking.setShippingSpeed(rs.getString("Par_Shipping_Speed"));
+	            booking.setPackingType(rs.getString("Par_Packing_Type"));
+	            
+	            // Convert SQL Date to Java Date
+	            booking.setPickupDate(rs.getDate("Par_PickupTime"));
+	            booking.setDropoffDate(rs.getDate("Par_DropoffTime"));
+	            booking.setBookingDate(rs.getDate("Par_BookingTime"));
+	            
+	            booking.setCost(rs.getDouble("Par_Cost"));
+	            booking.setStatus(rs.getString("Par_Status"));
+	        } else {
+	            logger.log(System.Logger.Level.WARNING, "Booking not found with ID: " + bookingId);
+	        }
+
+	        // Close resources
+	        rs.close();
+	        ps.close();
+	        conn.close();
+	    } catch (Exception e) {
+	        logger.log(System.Logger.Level.WARNING, e.getMessage());
+	    }
+	    
+	    return booking;
+	}
+	
+	public double getBookingPrice(String bookingId) throws ClassNotFoundException {
+	    Connect_jdbc cj = new Connect_jdbc();
+	    Connection conn = cj.connected();
+	    double price = -1;  // Initialize with a default value (-1) indicating that the booking is not found
+	    
+	    String sql = "SELECT Par_Cost FROM tbl_Booking WHERE booking_id = ?";
+	    
+	    try {
+	        PreparedStatement ps = conn.prepareStatement(sql);
+	        ps.setString(1, bookingId);
+	        
+	        ResultSet rs = ps.executeQuery();
+	        
+	        if (rs.next()) {
+	            price = rs.getDouble("Par_Cost");
+	        } else {
+	            logger.log(System.Logger.Level.WARNING, "Booking not found with ID: " + bookingId);
+	        }
+
+	        // Close resources
+	        rs.close();
+	        ps.close();
+	        conn.close();
+	    } catch (Exception e) {
+	        logger.log(System.Logger.Level.WARNING, e.getMessage());
+	    }
+	    
+	    return price;
+	}
+	
+	public boolean deleteBooking(String bookingId) throws ClassNotFoundException {
+		Connect_jdbc cj = new Connect_jdbc();
+	    Connection conn = cj.connected();
+	    boolean success = false;
+	    String sql = "DELETE FROM tbl_Booking WHERE Booking_id = ?";
+	    try {
+	    	PreparedStatement ps = conn.prepareStatement(sql);
+	    	ps.setString(1, bookingId);
+	    	int rows = ps.getUpdateCount();
+	    	if(rows > 0) {
+	    		success = true;
+	    		logger.log(System.Logger.Level.INFO , "Deleted the booking entry");
+	    	}
+	    }
+	    catch (Exception e) {
+			logger.log(System.Logger.Level.WARNING , e.getMessage());
+		}
+	    finally {
+	    	
+	    }
+	    
+	    return success;
+	}
+
 }
