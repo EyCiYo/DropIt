@@ -79,20 +79,15 @@ public class UserReg extends HttpServlet {
 	        String lowerCaseLetters = ".*[a-z].*";
 	        String numbers = ".*[0-9].*";
 	        
-	        if (password.length() < 8 || password.length() > 16) {
+	        if (password.length() < 8 || password.length() > 16 || !password.matches(numbers)||!password.matches(upperCaseLetters)||!password.matches(lowerCaseLetters)) {
 	            return false;
-	        } else if (!password.matches(numbers)) {
-	            return false;
-	        } else if (!password.matches(upperCaseLetters)) {
-	            return false;
-	        } else if (!password.matches(lowerCaseLetters)) {
-	            return false;
-	        } else {
+	        } 
+	        else {
 	            return true;
 	        }
 	    }
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Called Reg servlet Post");
+		System.getLogger("Called Reg servlet Post");
 		User obj = new User();
 		obj.setUserID(request.getParameter("username"));
 		obj.setName(request.getParameter("full_name"));
@@ -100,7 +95,7 @@ public class UserReg extends HttpServlet {
 		obj.setAddress(request.getParameter("address"));
 		obj.setMobile(request.getParameter("phone"));
 		obj.setPassword(request.getParameter("confirm_password"));
-		String preferences[] = request.getParameterValues("preferences");
+		String[] preferences = request.getParameterValues("preferences");
 		for (int i = 0; i < preferences.length; i++) {
 			if(preferences[i].equals("email")) {
 				obj.setEmailNotifications(true);
@@ -112,7 +107,7 @@ public class UserReg extends HttpServlet {
 		UserDao ud = new UserDao();
 		try {
 			if(ud.createUser(obj)) {
-				System.out.println("User Created Successfully");
+				System.getLogger("User Created Successfully");
 				response.sendRedirect("./user/Home/index.jsp");
 			}else {
 				PrintWriter out = response.getWriter();

@@ -12,11 +12,11 @@ public class Connect_jdbc {
 		try {
 			connect = DriverManager.getConnection(url);
 			if(connect!=null) {
-				System.out.println("Connection Established!!");
+				System.getLogger("Connection Established!!");
 			}
 		}
 		catch(SQLException e){
-			System.out.println("Unable to connect: " + e.getMessage());
+			System.getLogger("Unable to connect: " + e.getMessage());
 		}
 		return connect;
 	}

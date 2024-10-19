@@ -22,7 +22,7 @@
 		        // User is already logged in, redirect to home page
 		        response.sendRedirect(request.getContextPath()+"/user/Home/index.jsp");
 		    }
-		    else if (session.getAttribute("role").equals("admin")){
+		    else if (session.getAttribute("username") != null && session.getAttribute("role").equals("admin")){
 		    	response.sendRedirect(request.getContextPath()+"/admin/Home/index.jsp");
 		    }
 		}

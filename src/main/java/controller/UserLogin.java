@@ -29,7 +29,7 @@ public class UserLogin extends HttpServlet {
 		User obj = new User();
 		obj.setEmail(username);
 		obj.setPassword(password);
-		System.out.println(username+password);
+		System.getLogger(username+password);
 		UserDao ud = new UserDao();
 		try {
 			RequestDispatcher rd = request.getRequestDispatcher("./user/Login/index.jsp");
@@ -59,7 +59,7 @@ public class UserLogin extends HttpServlet {
 					break;
 			}			
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			System.getLogger(e.getMessage());
 		}
 	}

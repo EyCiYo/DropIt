@@ -154,10 +154,11 @@
 					<h1>
 						Track your <span style="color: var(--primary-emp-text);">order</span>
 					</h1>
-					<form name="track-form" onsubmit="return trackParcel()">
+					<form name="track-form" method="post" action="HomeTrack">
 						<div class="input-data">
 							<input type="text" name="tracking-id" id="tracking-id"
-								placeholder="Enter your Tracking Id" required> <input
+								placeholder="Enter your Tracking Id" required> 
+							<input
 								type="email" name="email" id="email"
 								placeholder="Enter your Email Id" required>
 						</div>

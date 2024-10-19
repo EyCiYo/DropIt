@@ -8,22 +8,23 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/user/Booking/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <title>Booking</title>
 </head>
 <body>
-
 	<%
 	    session = request.getSession(false);  
 	    if (session == null && session.getAttribute("username") == null) {
 	        // User is already logged in, redirect to home page
 	        response.sendRedirect(request.getContextPath()+"/");
 	    }
-	    else if (session!=null && session.getAttribute("role").equals("admin")){
-	    	response.sendRedirect(request.getContextPath()+"/admin/Home/index.jsp");
+	    else if (session!=null){
+		    if(session.getAttribute("role").equals("admin")){
+		    	response.sendRedirect(request.getContextPath()+"/admin/Home/index.jsp");
+		    }
 	    }
 	%>
     <jsp:include page="../../userheader.html"></jsp:include>
@@ -48,11 +49,10 @@
 		    		uid = obj.getUserID();
 		    		address = obj.getAddress();
 		    	}
-		    	
 		    %>
         <h1>Package Details</h1><br>
         <div class="booking-form">
-            <form method="post" action="../../BookParcel">
+            <form method="post" action="${pageContext.request.contextPath}/BookParcel">
                 <div class="sender-info">
                     <div class="hanging-title">Pickup From:</div>
                     <label for="sendername">Name: </label><input type="text" name="sendername" id="sendername" placeholder="Sender Name" value="<%=name %>" readonly>
@@ -63,17 +63,17 @@
                 </div>
                 <div class="receiver-info">
                     <div class="hanging-title">Drop To:</div>
-                    <label for="recname">Name: </label> <input type="text" name="recname" id="recname" placeholder="Receiver Name" required>
+                    <label for="recname">Name: </label> <input type="text" name="recname" id="recname" placeholder="Receiver Name" value="<%=request.getAttribute("recname")!=null?request.getAttribute("recname"):"" %>" required>
                     <label for="recaddress">Address: </label>
-                    <textarea name="recaddress" id="recaddress" cols="30" rows="3" placeholder="Destination Address" required></textarea>
-                    <label for="recemail">Email: </label><input type="email" name="recemail" id="recemail" placeholder="Receiver Email" required>
-                    <label for="mobilenumber">Mobile No:</label><input type="number" name="recmobile" id="recmobile" placeholder="Receiver Mobile No." required>
+                    <textarea name="recaddress" id="recaddress" cols="30" rows="3" placeholder="Destination Address" required><%=request.getAttribute("recaddress")!=null?request.getAttribute("recaddress"):"" %></textarea>
+                    <label for="recemail">Email: </label><input type="email" name="recemail" id="recemail" placeholder="Receiver Email" value="<%=request.getAttribute("recemail")!=null?request.getAttribute("recemail"):"" %>" required>
+                    <label for="mobilenumber">Mobile No:</label><input type="number" name="recmobile" id="recmobile" placeholder="Receiver Mobile No." value="<%=request.getAttribute("recmobile")!=null?request.getAttribute("recmobile"):"" %>" required>
                 </div>
                 
                 <div class="parcel-details">
                     <div class="hanging-title">Parcel Details:</div>
                     <div class="length cflex">
-                        <label for="length">Length: </label><input type="number" name="length" id="length" placeholder="0cm" required>
+                        <label for="length">Length: </label><input type="number" name="length" id="length" placeholder="0cm" value="<%=request.getAttribute("length")!=null?request.getAttribute("length"):"" %>" required>
                     </div>
                     <div class="breadth cflex">
                         <label for="breadth">Breadth: </label><input type="number" name="breadth" id="breadth" placeholder="0cm" required>
@@ -155,12 +155,18 @@
                     </button> 
                 </div>
             </form>
+            <%
+	            String errorMessage = (String)request.getAttribute("errorMessage");
+		    	if(errorMessage != null){
+		    %>
+		    		<script>alert("<%=errorMessage%>");</script>
+		    	<%}
+            %>
         </div>
-
     </main>
 
     
 	<jsp:include page="../../userfooter.html"></jsp:include>
-    <script src="${pageContext.request.contextPath}/User/Booking/script.js"></script>
+    <script src="${pageContext.request.contextPath}/user/Booking/script.js"></script>
 </body>
 </html>

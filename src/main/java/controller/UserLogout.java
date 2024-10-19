@@ -22,7 +22,7 @@ public class UserLogout extends HttpServlet {
 			System.out.println("Destroying Session for " + session.getAttribute("username"));
 			session.invalidate();
 			
-			System.out.println("Session Over");
+			System.getLogger("Session Over");
 			
 			resp.sendRedirect(req.getContextPath()+"/");
 		}

@@ -22,12 +22,15 @@ import dao.BookingDao;
 public class TrackParcel extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	@Override
-		protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 			String bid = request.getParameter("tracking-id");
+			HttpSession session = request.getSession(false);
+			String email = (String) session.getAttribute("username");
+			RequestDispatcher rd = request.getRequestDispatcher("./user/Tracking/index.jsp");
 			BookingDao bd = new BookingDao();
 			
 			try {
-				Booking obj = bd.getTracking(bid);
+				Booking obj = bd.getTracking(bid,email);
 				if(obj != null) {
 					request.setAttribute("bookingid", obj.getBookingId());
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -36,13 +39,11 @@ public class TrackParcel extends HttpServlet {
 					request.setAttribute("deliverydate", deliveryDate);
 					request.setAttribute("bookingdate", bookingDate);
 					request.setAttribute("status", obj.getStatus());
-					RequestDispatcher rd = request.getRequestDispatcher("./user/Tracking/index.jsp");
 					rd.forward(request, response);
 				}
 				else {
 					request.setAttribute("errorMessage", "No booking found with this ID");
 					request.setAttribute("bookingid", bid);
-					RequestDispatcher rd = request.getRequestDispatcher("./user/Tracking/index.jsp");
 					rd.forward(request, response);
 				}
 			} catch (Exception e) {

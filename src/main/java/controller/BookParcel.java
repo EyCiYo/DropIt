@@ -5,7 +5,10 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,115 +25,106 @@ import dao.BookingDao;
 public class BookParcel extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-		
+		PrintWriter out = response.getWriter();
+
 		// Retrieve sender information
-        String senderName = request.getParameter("sendername");
-        String senderAddress = request.getParameter("senderaddress");
-        String senderEmail = request.getParameter("senderemail");
-        String senderMobile = request.getParameter("sendermobile");
-        
-        // Retrieve receiver information
-        String recName = request.getParameter("recname");
-        String recAddress = request.getParameter("recaddress");
-        String recEmail = request.getParameter("recemail");
-        String recMobile = request.getParameter("recmobile");
+		String senderName = request.getParameter("sendername");
+		request.setAttribute("senderName", senderName);
+		String senderAddress = request.getParameter("senderaddress");
+		request.setAttribute("senderAddress", senderAddress);
+		String senderEmail = request.getParameter("senderemail");
+		request.setAttribute("senderEmail", senderEmail);
+		String senderMobile = request.getParameter("sendermobile");
+		request.setAttribute("senderMobile", senderMobile);
 
-        // Retrieve parcel details
-        double length = Double.parseDouble(request.getParameter("length"));
-        double breadth = Double.parseDouble(request.getParameter("breadth"));
-        double height = Double.parseDouble(request.getParameter("height"));
-        double weight = Double.parseDouble(request.getParameter("weight"));
-        String description = request.getParameter("description");
+		// Retrieve receiver information
+		String recName = request.getParameter("recname");
+		request.setAttribute("recname", recName);
+		String recAddress = request.getParameter("recaddress");
+		request.setAttribute("recaddress", recAddress);
+		String recEmail = request.getParameter("recemail");
+		request.setAttribute("recemail", recEmail);
+		String recMobile = request.getParameter("recmobile");
+		request.setAttribute("recmobile", recMobile);
 
-        // Retrieve shipping options
-        String shippingOption = request.getParameter("shippingoption");
-        String packagingType = request.getParameter("packagingtype");
+		// Retrieve parcel details
+		double length = Double.parseDouble(request.getParameter("length"));
+		request.setAttribute("length", length);
+		double breadth = Double.parseDouble(request.getParameter("breadth"));
+		request.setAttribute("breadth", breadth);
+		double height = Double.parseDouble(request.getParameter("height"));
+		request.setAttribute("height", height);
+		double weight = Double.parseDouble(request.getParameter("weight"));
+		request.setAttribute("weight", weight);
+		String description = request.getParameter("description");
+		request.setAttribute("description", description);
 
-        // Retrieve pickup and dropoff dates
-        
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date pickupDate = null;
-        Date dropDate = null;
+		// Retrieve shipping options
+		String shippingOption = request.getParameter("shippingoption");
+		
+		String packagingType = request.getParameter("packagingtype");
+
+		// Retrieve pickup and dropoff dates
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date pickupDate = null;
+		Date dropDate = null;
 		try {
 			pickupDate = dateFormat.parse(request.getParameter("pickup-date"));
-			dropDate = dateFormat.parse(request.getParameter("drop-date"));  // For dropoff date
+			dropDate = dateFormat.parse(request.getParameter("drop-date")); // For dropoff date
 		} catch (ParseException e) {
 			System.getLogger(e.getMessage());
 		}
-		
-		
+
 		// Status set to "Booked" when a new booking is created
-        String status = "Booked";
+		String status = "Booked";
 
-        // Create and populate the Booking object
-        Booking booking = new Booking();
-        booking.setSenderName(senderName);
-        booking.setSenderAddress(senderAddress);
-        booking.setSenderEmail(senderEmail);
-        booking.setSenderMobile(senderMobile);
+		// Create and populate the Booking object
+		Booking booking = new Booking();
+		booking.setSenderName(senderName);
+		booking.setSenderAddress(senderAddress);
+		booking.setSenderEmail(senderEmail);
+		booking.setSenderMobile(senderMobile);
 
-        booking.setReceiverName(recName);
-        booking.setReceiverAddress(recAddress);
-        booking.setReceiverEmail(recEmail);
-        booking.setReceiverMobile(recMobile);
+		booking.setReceiverName(recName);
+		booking.setReceiverAddress(recAddress);
+		booking.setReceiverEmail(recEmail);
+		booking.setReceiverMobile(recMobile);
 
-        booking.setLength(length);
-        booking.setHeight(height);
-        booking.setWidth(breadth);  // Assuming "breadth" is width
-        booking.setWeight(weight);
-        booking.setContentDescription(description);
+		booking.setLength(length);
+		booking.setHeight(height);
+		booking.setWidth(breadth); // Assuming "breadth" is width
+		booking.setWeight(weight);
+		booking.setContentDescription(description);
 
-        booking.setShippingSpeed(shippingOption);
-        booking.setPackingType(packagingType);
+		booking.setShippingSpeed(shippingOption);
+		booking.setPackingType(packagingType);
 
-        booking.setBookingDate(new Date());
-        booking.setPickupDate(pickupDate);
-        booking.setDropoffDate(dropDate);
+		booking.setBookingDate(new Date());
+		booking.setPickupDate(pickupDate);
+		booking.setDropoffDate(dropDate);
 
-        booking.setStatus(status);
-        String bid = null;
-        BookingDao bd = new BookingDao();
-        try {
-			 bid = bd.createNewBooking(booking);
+		booking.setStatus(status);
+		BookingDao bd = new BookingDao();
+		String err=bd.processBooking(booking);
+		
+		if(!err.equals("Success")) {
+			System.getLogger("Error in validation");
+			request.setAttribute("errorMessage", err);
+			RequestDispatcher rd = request.getRequestDispatcher("./user/Booking/index.jsp");
+			rd.forward(request, response);
+			return;
+		}
+		
+		String bid = null;
+		try {
+			bid = bd.createNewBooking(booking);
 		} catch (ClassNotFoundException e) {
 			System.getLogger(e.getMessage());
 		}
-        		
-
-        
-        
-        
-     // Display retrieved data (optional)
-        out.println("<h2>Parcel Booking Information</h2>");
-        out.println("<h3>Sender Info:</h3>");
-        out.println("Name: " + senderName + "<br>");
-        out.println("Address: " + senderAddress + "<br>");
-        out.println("Email: " + senderEmail + "<br>");
-        out.println("Mobile: " + senderMobile + "<br>");
-
-        out.println("<h3>Receiver Info:</h3>");
-        out.println("Name: " + recName + "<br>");
-        out.println("Address: " + recAddress + "<br>");
-        out.println("Email: " + recEmail + "<br>");
-        out.println("Mobile: " + recMobile + "<br>");
-
-        out.println("<h3>Parcel Details:</h3>");
-        out.println("Length: " + length + " cm<br>");
-        out.println("Breadth: " + breadth + " cm<br>");
-        out.println("Height: " + height + " cm<br>");
-        out.println("Weight: " + weight + " kg<br>");
-        out.println("Description: " + description + "<br>");
-
-        out.println("<h3>Shipping Options:</h3>");
-        out.println("Shipping Speed: " + shippingOption + "<br>");
-        out.println("Packaging Type: " + packagingType + "<br>");
-        out.println("Preferred Pickup Date: " + pickupDate + "<br>");
-        out.println("Preferred Dropoff Date: " + dropDate + "<br>");
-
-        out.close();
 	}
 
 }

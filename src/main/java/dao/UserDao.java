@@ -19,16 +19,16 @@ public class UserDao {
 			if(rs.next()) {
 				if(obj.getPassword().equals(rs.getString(1))) {
 					result = 1;
-					System.out.println("Password Match");
+					System.getLogger("Password Match");
 				}
 				else {
 					result = 0;
-					System.out.println("Password Mismatch");
+					System.getLogger("Password Mismatch");
 				}	
 			}
 			else {
 				result = -1;
-				System.out.println("No user found");
+				System.getLogger("No user found");
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -56,12 +56,10 @@ public class UserDao {
 			ps.execute();
 			int rows =  ps.getUpdateCount();
 			if(rows != -1) {
-				System.out.println("Rows Updated: "+rows);
+				System.getLogger("Rows Updated: "+rows);
 				result = true;
 			}
-			else {
-				result = false;
-			}
+			
 			conn.close();
 		}
 		catch (Exception e) {
@@ -80,15 +78,15 @@ public class UserDao {
 			ps.setString(1, email);
 			ResultSet rs=ps.executeQuery();
 			if(rs.next()) {
-				System.out.println("User found. Fetching Details...");
+				System.getLogger("User found. Fetching Details...");
 				obj.setName(rs.getString("FullName"));
 				obj.setMobile(rs.getString("MobileNumber"));
 				obj.setUserID(rs.getString("UserID"));
 				obj.setAddress(rs.getString("Address"));
-				System.out.println(obj.toString());
+				System.getLogger(obj.toString());
 			}
 			else {
-				System.out.println("No such user found");
+				System.getLogger("No such user found");
 				obj = null;
 			}
 			conn.close();
