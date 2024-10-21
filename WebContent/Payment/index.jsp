@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="/DropIt/Payment/style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link
@@ -18,8 +18,13 @@
 <body>
 	<%
 	String bid = (String) request.getAttribute("bookingid");
+	out.println(bid);
 	BookingDao bd = new BookingDao();
 	double price = bd.getBookingPrice(bid);
+	if(bid == null){
+		RequestDispatcher rd = request.getRequestDispatcher("./index.jsp");
+		rd.forward(request, response);
+	}
 	%>
 	<div class="payment-container">
 		<div class="pay-left">
@@ -43,7 +48,7 @@
 			</a>
 		</div>
 		<form class="card-form-container" id="cardFormContainer"
-			action="../MakePayment" method="post">
+			action="/DropIt/MakePayment" method="post">
 			<div class="card-form" id="cardForm">
 				<h3 id="formTitle">Debit Card Payment</h3>
 				<label for="cardNumber">Card Number:</label>
@@ -70,9 +75,15 @@
 					<button type="submit">Submit Payment</button>
 					<button onclick="resetForm()">Reset</button>
 				</div>
-
+				<input type="hidden" value="<%=bid%>" name="bookingid">
 			</div>
 		</form>
+		<%
+			String err = (String)request.getAttribute("errorMessage");
+			if(err != null){%>
+				<script>alert('<%=err%>')</script>
+		<%	}
+		%>
 	</div>
 
 

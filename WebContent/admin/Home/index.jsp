@@ -14,14 +14,15 @@
 </head>
 <body>
 	<%
-	    session = request.getSession(false);  
-	    if (session == null && session.getAttribute("username") == null) {
-	        // User is already logged in, redirect to home page
-	        response.sendRedirect(request.getContextPath()+"/");
-	    }
-	    else if (session!=null && session.getAttribute("role").equals("user")){
-	    	response.sendRedirect(request.getContextPath()+"/user/Home/index.jsp");
-	    }
+	session = request.getSession(false);
+	if (session == null || session.getAttribute("username") == null) {
+		response.sendRedirect(request.getContextPath() + "/");
+	} else if (session != null) {
+		if (session.getAttribute("role").equals("user")) {
+
+			response.sendRedirect(request.getContextPath() + "/user/Home/index.jsp");
+		}
+	}
 	%>
     <jsp:include page="../../adminheader.html"></jsp:include>
 

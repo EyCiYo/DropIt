@@ -196,7 +196,7 @@ public class BookingDao {
 		Connect_jdbc cj = new Connect_jdbc();
 		Connection conn = cj.connected();
 		String rbid = null;
-		String sql = "INSERT INTO tbl_Booking VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO tbl_Booking VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		String check = "Select Par_Cost from tbl_booking where booking_id = ?";
 		double volume = obj.getLength() * obj.getWidth() * obj.getHeight();
 		double weight = obj.getWeight();
@@ -233,27 +233,31 @@ public class BookingDao {
 			// Set the parameters based on the data types
 
 			ps.setString(1, bid);
-			ps.setString(2, obj.getSenderEmail()); // Sender_Email VARCHAR(50)
-			ps.setString(3, obj.getReceiverName()); // Rec_Name VARCHAR(50)
-			ps.setString(4, obj.getReceiverAddress()); // Rec_Address VARCHAR(100)
-			ps.setString(5, obj.getReceiverMobile()); // Rec_Mobile VARCHAR(20)
-			ps.setString(6, obj.getReceiverEmail()); // Rec_Email VARCHAR(40)
-			ps.setDouble(7, obj.getLength()); // Par_Length DECIMAL(10,2)
-			ps.setDouble(8, obj.getHeight()); // Par_Height DECIMAL(10,2)
-			ps.setDouble(9, obj.getWidth()); // Par_Width DECIMAL(10,2)
-			ps.setDouble(10, obj.getWeight()); // Par_Weight_Gram DECIMAL(10,2)
-			ps.setString(11, obj.getContentDescription()); // Par_Contents_Description VARCHAR(200)
-			ps.setString(12, obj.getShippingSpeed()); // Par_Shipping_Speed VARCHAR(20)
-			ps.setString(13, obj.getPackingType()); // Par_Packing_Type VARCHAR(20)
-			ps.setDate(14, sqlPickupDate); // Par_PickupTime DATE
-			ps.setDate(15, sqlDropDate); // Par_DropoffTime DATE
-			ps.setDate(16, sqlBookingDate); // Par_BookingTime DATE
-			ps.setDouble(17, estimatedCost); // Par_Cost DECIMAL(10,2)
-			ps.setString(18, obj.getStatus()); // Par_Status VARCHAR(20)
+			ps.setString(2, obj.getSenderName()); // Sender_Email VARCHAR(50)
+			ps.setString(3, obj.getSenderEmail());
+			ps.setString(4, obj.getSenderAddress());
+			ps.setString(5, obj.getSenderMobile());
+			ps.setString(6, obj.getReceiverName()); // Rec_Name VARCHAR(50)
+			ps.setString(7, obj.getReceiverAddress()); // Rec_Address VARCHAR(100)
+			ps.setString(8, obj.getReceiverMobile()); // Rec_Mobile VARCHAR(20)
+			ps.setString(9, obj.getReceiverEmail()); // Rec_Email VARCHAR(40)
+			ps.setDouble(10, obj.getLength()); // Par_Length DECIMAL(10,2)
+			ps.setDouble(11, obj.getHeight()); // Par_Height DECIMAL(10,2)
+			ps.setDouble(12, obj.getWidth()); // Par_Width DECIMAL(10,2)
+			ps.setDouble(13, obj.getWeight()); // Par_Weight_Gram DECIMAL(10,2)
+			ps.setString(14, obj.getContentDescription()); // Par_Contents_Description VARCHAR(200)
+			ps.setString(15, obj.getShippingSpeed()); // Par_Shipping_Speed VARCHAR(20)
+			ps.setString(16, obj.getPackingType()); // Par_Packing_Type VARCHAR(20)
+			ps.setDate(17, sqlPickupDate); // Par_PickupTime DATE
+			ps.setDate(18, sqlDropDate); // Par_DropoffTime DATE
+			ps.setDate(19, sqlBookingDate); // Par_BookingTime DATE
+			ps.setDouble(20, estimatedCost); // Par_Cost DECIMAL(10,2)
+			ps.setString(21, obj.getStatus()); // Par_Status VARCHAR(20)
 			ps.execute();
 			int rowcount = ps.getUpdateCount();
 			if (rowcount > 0) {
 				rbid = bid;
+				logger.log(System.Logger.Level.INFO,"Booking data inserted");
 			} else {
 				logger.log(System.Logger.Level.ERROR,"Booking data not inserted");
 			}
@@ -272,7 +276,7 @@ public class BookingDao {
 	    Connection conn = cj.connected();
 	    Booking booking = null;
 	    
-	    String sql = "SELECT Sender_Email, Rec_Name, Rec_Address, Rec_Mobile, Rec_Email, Par_Length, Par_Height, Par_Width, " +
+	    String sql = "SELECT Sender_Name,Sender_mobile,Sender_address,Sender_Email, Rec_Name, Rec_Address, Rec_Mobile, Rec_Email, Par_Length, Par_Height, Par_Width, " +
 	                 "Par_Weight_Gram, Par_Contents_Description, Par_Shipping_Speed, Par_Packing_Type, Par_PickupTime, " +
 	                 "Par_DropoffTime, Par_BookingTime, Par_Cost, Par_Status FROM tbl_Booking WHERE booking_id = ?";
 	    
@@ -285,6 +289,9 @@ public class BookingDao {
 	        if (rs.next()) {
 	            // If booking is found, populate the Booking object with the data
 	            booking = new Booking();
+	            booking.setSenderAddress(rs.getString("Sender_address"));
+	            booking.setSenderMobile(rs.getString("Sender_mobile"));
+	            booking.setSenderName(rs.getString("Sender_name"));
 	            booking.setSenderEmail(rs.getString("Sender_Email"));
 	            booking.setReceiverName(rs.getString("Rec_Name"));
 	            booking.setReceiverAddress(rs.getString("Rec_Address"));
@@ -305,6 +312,7 @@ public class BookingDao {
 	            
 	            booking.setCost(rs.getDouble("Par_Cost"));
 	            booking.setStatus(rs.getString("Par_Status"));
+	            booking.setBookingId(bookingId);
 	        } else {
 	            logger.log(System.Logger.Level.WARNING, "Booking not found with ID: " + bookingId);
 	        }
@@ -363,6 +371,8 @@ public class BookingDao {
 	    		success = true;
 	    		logger.log(System.Logger.Level.INFO , "Deleted the booking entry");
 	    	}
+	    	ps.close();
+	    	conn.close();
 	    }
 	    catch (Exception e) {
 			logger.log(System.Logger.Level.WARNING , e.getMessage());

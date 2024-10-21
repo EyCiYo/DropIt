@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import bean.Booking;
 import dao.BookingDao;
@@ -24,6 +25,8 @@ public class HomeTrack extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String bookingid = request.getParameter("tracking-id");
 		String email = request.getParameter("email");
+		HttpSession session = request.getSession(false);
+		String role = (session != null ? (String) session.getAttribute("role"):"");
 		RequestDispatcher rd = request.getRequestDispatcher("./hometracking.jsp");
 		
 		BookingDao bd = new BookingDao();

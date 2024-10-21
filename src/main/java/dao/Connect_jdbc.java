@@ -9,7 +9,7 @@ public class Connect_jdbc {
 		System.Logger logger = System.getLogger("error");
 		Connection connect = null;
 		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-		String url = "jdbc:derby:C:\\Users\\alexc\\MyDB;create=true";
+		String url = "jdbc:derby:D:\\Users\\2730366\\MyDB;create=true";
 		try {
 			connect = DriverManager.getConnection(url);
 			if(connect!=null) {
@@ -17,7 +17,7 @@ public class Connect_jdbc {
 			}
 		}
 		catch(SQLException e){
-			logger.log(System.Logger.Level.INFO,"Unable to connect: " + e.getMessage());
+			logger.log(System.Logger.Level.WARNING,"Unable to connect: " + e.getMessage());
 		}
 		return connect;
 	}

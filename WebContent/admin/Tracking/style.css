@@ -242,6 +242,11 @@ footer a{
     color: #000000;
     margin-bottom: 1.5rem;
 }
+.input-data{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
 
 .input-data input {
     width: 100%;

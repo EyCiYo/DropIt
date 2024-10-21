@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/DropIt/admin/Booking/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -15,21 +15,21 @@
 </head>
 <body>
 	<%
-	    session = request.getSession(false);  
-	    if ((session == null && session.getAttribute("username") == null) ) {
-	        // User is already logged in, redirect to home page
-	        response.sendRedirect(request.getContextPath()+"/");
-	    }
-	    else if (session!=null && session.getAttribute("role").equals("user")){
-	    	response.sendRedirect(request.getContextPath()+"/user/Home/index.jsp");
-	    }
+	session = request.getSession(false);
+	if (session == null || session.getAttribute("username") == null) {
+		response.sendRedirect(request.getContextPath() + "/");
+	} else if (session != null) {
+		if (session.getAttribute("role").equals("user")) {
+			response.sendRedirect(request.getContextPath() + "/user/Home/index.jsp");
+		}
+	}
 	%>
     <jsp:include page="../../adminheader.html"></jsp:include>
 	
     <main>
         <h1>Package Details</h1><br>
         <div class="booking-form">
-            <form action="" method="post" onsubmit="return bookParcel()">
+            <form action="../../BookParcel" method="post" >
                 <div class="sender-info">
                     <div class="hanging-title">Pickup From:</div>
                     <label for="sendername">Name: </label><input type="text" name="sendername" id="sendername" placeholder="Sender Name" required >
@@ -107,9 +107,9 @@
                         </div>
                     </div>
                     <label for="date">Prefered Pickup Date: </label>
-                    <input type="datetime-local" name="date" id="date" required>
+                    <input type="datetime-local" name="pickup-date" id="pickup-date" required>
                     <label for="date">Prefered Dropoff Date: </label>
-                    <input type="datetime-local" name="date" id="drop-date" required>
+                    <input type="datetime-local" name="drop-date" id="drop-date" required>
                 </div>
                 <div class="cost-display">
                     <label for="esimatedcost"><b>Estimated Cost:</b></label>
@@ -138,6 +138,6 @@
 
     <jsp:include page="../../adminfooter.html"></jsp:include>
 
-    <script src="script.js"></script>
+    <script src="/DropIt/admin/Booking/script.js"></script>
 </body>
 </html>

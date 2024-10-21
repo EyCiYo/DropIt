@@ -28,6 +28,5 @@ function printPage(){
     window.print();
 }
 function goHome(){
-    window.location.href = "/user/Home/index.html";
-    window.history.pushState(null,null,'/user/Home/index.html')
+    window.location.href = "/DropIt/user/Home/index.jsp";
 }

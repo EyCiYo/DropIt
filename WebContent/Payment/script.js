@@ -20,17 +20,6 @@ cvv.addEventListener('input', function() {
         cvv.value = cvv.value.substring(0, 3);
     }*/
 });
-window.onload = function() {
-    if (localStorage['booking-no'] === undefined || localStorage['booking-cost'] === undefined) {
-        document.getElementById('book-id').innerHTML = "BN_as34W2";
-        document.getElementById('amount').innerHTML = "Rs. 1000";
-    }
-    else {
-        document.getElementById('book-id').innerHTML = localStorage['booking-no'].toString();
-        document.getElementById('amount').innerHTML = "Rs. " + localStorage['booking-cost'].toString();
-    }
-
-}
 
 function updateString(value) {
     selectedMethod = value;

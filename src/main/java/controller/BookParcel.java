@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import bean.Booking;
 import dao.BookingDao;
@@ -111,11 +112,12 @@ public class BookParcel extends HttpServlet {
 		booking.setStatus(status);
 		BookingDao bd = new BookingDao();
 		String err=bd.processBooking(booking);
-		
+		HttpSession session = request.getSession(false);
+		String curUser = (String)session.getAttribute("role"); 
 		if(!err.equals("Success")) {
 			logger.log(System.Logger.Level.ERROR,"Error in validation");
 			request.setAttribute("errorMessage", err);
-			RequestDispatcher rd = request.getRequestDispatcher("./user/Booking/index.jsp");
+			RequestDispatcher rd = request.getRequestDispatcher("./"+ curUser+"/Booking/index.jsp");
 			rd.forward(request, response);
 			return;
 		}
