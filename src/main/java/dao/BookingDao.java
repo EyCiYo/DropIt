@@ -159,6 +159,51 @@ public class BookingDao {
 
 		return arr;
 	}
+	
+	public ArrayList<Booking> getPreviousBooking(String email,Date from,Date to) throws ClassNotFoundException, SQLException {
+		Connect_jdbc cj = new Connect_jdbc();
+		Connection conn = cj.connected();
+		ArrayList<Booking> arr = new ArrayList<>();
+		String sql = "select * from tbl_Booking where Sender_Email=? AND par_bookingtime BETWEEN ? AND ?";
+
+		try {
+			java.sql.Date sqlFromDate = new java.sql.Date(from.getTime());
+			java.sql.Date sqlToDate = new java.sql.Date(to.getTime());
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, email);
+			st.setDate(2, sqlFromDate);
+			st.setDate(3, sqlToDate);
+			ResultSet rs = st.executeQuery();
+			
+			int rowcount = 0;
+
+			while (rs.next()) {
+				Booking match1 = new Booking();
+				match1.setBookingId(rs.getString("Booking_ID"));
+				match1.setBookingDate(rs.getDate("Par_BookingTime"));
+				match1.setReceiverName(rs.getString("Rec_Name"));
+				match1.setReceiverAddress(rs.getString("Rec_Address"));
+				match1.setCost(rs.getDouble("Par_Cost"));
+				match1.setStatus(rs.getString("Par_Status"));
+				match1.setSenderEmail(rs.getString("Sender_email"));
+				arr.add(match1);
+				rowcount++;
+			}
+			if (rowcount > 0) {
+				logger.log(System.Logger.Level.INFO,"Fetched Previous Booking data: " + rowcount);
+			} else {
+				arr = null;
+				logger.log(System.Logger.Level.ERROR,"Error in fetching Previous Booking data");
+			}
+
+			conn.close();
+			st.close();
+		} catch (Exception e) {
+			logger.log(System.Logger.Level.WARNING,e.getMessage());
+		}
+
+		return arr;
+	}
 
 	public Booking getTracking(String bid, String email) throws ClassNotFoundException {
 		Connect_jdbc cj = new Connect_jdbc();
@@ -382,6 +427,34 @@ public class BookingDao {
 	    }
 	    
 	    return success;
+	}
+	
+	
+	public ArrayList<Booking> getAllBooking() throws ClassNotFoundException {
+		ArrayList<Booking> al = new ArrayList<Booking>();
+		Connect_jdbc cj = new Connect_jdbc();
+	    Connection conn = cj.connected();
+	    String sql = "select * from tbl_booking";
+	    try{
+	    	PreparedStatement ps = conn.prepareStatement(sql);
+	    	ResultSet rs = ps.executeQuery();
+	    	while(rs.next()) {
+	    		Booking obj = new Booking();
+	    		obj.setBookingId(rs.getString("booking_id"));
+	    		obj.setSenderName(rs.getString("Sender_name"));
+	    		obj.setSenderEmail(rs.getString("Sender_email"));
+	    		obj.setReceiverName(rs.getString("rec_name"));
+	    		obj.setReceiverAddress(rs.getString("rec_address"));
+	    		obj.setStatus(rs.getString("par_status"));
+	    		obj.setBookingDate(rs.getDate("Par_BookingTime"));
+	    		obj.setCost(rs.getDouble("Par_cost"));
+	    		al.add(obj);
+	    		logger.log(System.Logger.Level.INFO, "Added booking to list");
+	    	}
+	    }catch (Exception e) {
+			logger.log(System.Logger.Level.WARNING, e.getMessage());
+		}
+		return al;
 	}
 
 }

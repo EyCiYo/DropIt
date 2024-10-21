@@ -125,6 +125,8 @@ public class BookParcel extends HttpServlet {
 		String bid = null;
 		try {
 			bid = bd.createNewBooking(booking);
+			System.out.println(bid);
+			session.setAttribute("bookingid", bid);
 			logger.log(System.Logger.Level.INFO, "Booking created. Redirecting to payment....");
 			request.setAttribute("bookingid", bid);
 			RequestDispatcher rd = request.getRequestDispatcher("./Payment/index.jsp");

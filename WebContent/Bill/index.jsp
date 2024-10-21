@@ -18,18 +18,13 @@
 </head>
 <body>
 	<%
-		String bookingid = (String)request.getAttribute("bookingid");
+		String bookingid = (String)session.getAttribute("bookingid");
 		Booking obj = new Booking();
 		User user = new User();
 		BookingDao bd = new BookingDao();
 		UserDao ud = new UserDao();
 		String billNo = (String)request.getAttribute("billNo");
-		String resp = (String)request.getAttribute("resp");
-		
-		if(resp!=null){
-			out.println(resp);
-			request.getRequestDispatcher("../index.jsp").forward(request, response);
-		}
+	
 /* 		out.println(bookingid+billNo); */
 		if(bookingid != null){
 /* 			out.println("<h1>Found booking</h1>"); */

@@ -18,11 +18,10 @@
 <body>
 	<%
 	String bid = (String) request.getAttribute("bookingid");
-	out.println(bid);
 	BookingDao bd = new BookingDao();
 	double price = bd.getBookingPrice(bid);
 	if(bid == null){
-		RequestDispatcher rd = request.getRequestDispatcher("./index.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("../index.jsp");
 		rd.forward(request, response);
 	}
 	%>

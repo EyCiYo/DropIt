@@ -1,3 +1,6 @@
+<%@page import="dao.BookingDao"%>
+<%@page import="bean.Booking"%>
+<%@page import="java.util.*"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
@@ -6,7 +9,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="/DropIt/admin/Tracking/style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link
@@ -16,16 +19,51 @@
 </head>
 <body>
 	<%
-	session = request.getSession(false);
-	if (session == null || session.getAttribute("username") == null) {
-		response.sendRedirect(request.getContextPath() + "/");
-	} else if (session != null) {
-		if (session.getAttribute("role").equals("user")) {
-
-			response.sendRedirect(request.getContextPath() + "/user/Home/index.jsp");
-		}
-	}
-	%>
+        session = request.getSession(false);
+        String username = null;
+        String bid = null;
+        String deliverydate = null;
+        String bookingdate = null;
+        String status = null;
+        String errorMessage = null;
+        if(session == null || session.getAttribute("username") == null){
+            RequestDispatcher rd = getServletContext().getRequestDispatcher(request.getContextPath()+"/");
+            rd.forward(request, response);
+        }
+        else if (session!=null && session.getAttribute("role").equals("admin")){
+            response.sendRedirect(request.getContextPath()+"/admin/Home/index.jsp");
+        }
+        else{
+            username = (String)request.getAttribute("username");
+            bid = (String)request.getAttribute("bookingid");
+            deliverydate = (String)request.getAttribute("deliverydate");
+            status = (String)request.getAttribute("status");
+            bookingdate = (String)request.getAttribute("bookingdate");
+            errorMessage = (String)request.getAttribute("errorMessage");
+            Map<String,String> progress = Map.of(
+                    "Booked","1",
+                    "Picked Up","2",
+                    "In Transit","3",
+                    "Out for Delivery","4",
+                    "Delivered","5");
+            if(errorMessage == null){
+                if(bid!=null && deliverydate != null && status != null){
+                    %>
+                <script>
+                    window.onload = function(){
+                        startProgressBar(<%=progress.get(status)%>);
+                    }
+                </script>
+            
+            <%}}
+            else{%>
+            	<script>
+                    window.onload = function(){
+                        document.getElementById('error').innerHTML = errorMessage;
+                    }
+                </script>
+            <%}
+        }%>
 	<jsp:include page="../../adminheader.html"></jsp:include>
 
 	<main>
@@ -39,16 +77,18 @@
 					<h1>
 						Track your <span style="color: var(--dark-blue);">order</span>
 					</h1>
-					<form action="" name="track-form">
+					<form action="../../HomeTrack" name="track-form">
 						<div class="input-data">
 							<input type="text" name="tracking-id"
-								placeholder="Enter your Tracking Id" required>
+								placeholder="Enter your Tracking Id"
+								value="<%=request.getAttribute("tracking-id")!=null?request.getAttribute("tracking-id"):"" %>" required>
 							<input
 								type="email" name="email" id="email"
 								placeholder="Enter your Email Id" 
 								value="<%=request.getAttribute("email")!=null?request.getAttribute("email"):"" %>" required>
 							<div class="underline"></div>
-						</div>
+						</div><br>
+						<p id="error" style="color:red;"></p>
 						<div class="track-btn">
 							<button type="submit">
 								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -80,10 +120,10 @@
 			<div class="result-heading">
 				<h1 style="color: rgb(20, 20, 20);">Order Status</h1>
 				<h2 class="sub-text">
-					Tracking ID: <span id="tracking-id"></span>
+					Tracking ID: <span id="tracking-id"><%=bid %></span>
 				</h2>
 				<h2 class="sub-text">
-					User ID: <span id="user-id"></span>
+					User ID: <span id="user-id"><%=username %></span>
 				</h2>
 			</div>
 			<div class="progress-bar">
@@ -103,72 +143,35 @@
 			</div>
 			<div class="tracking-info">
 				<p class="sub-text">
-					<b>Current Location:</b> <span id="current-location"></span>
+					<b>Booking Date:</b> <span id="booking-date"><%=bookingdate %></span>
 				</p>
 				<p class="sub-text">
-					<b>Estimated Arrival:</b> <span id="estimated-arrival"></span>
+					<b>Estimated Arrival:</b> <span id="estimated-arrival"><%=bookingdate %></span>
 				</p>
 			</div>
 		</div>
 		<div class="previous-details" id="previous-details">
-			<h2>All Bookings Done</h2>
-			<div class="table-responsive">
-				<table>
-					<thead>
-						<tr>
-							<th>Booking ID</th>
-							<th>User ID</th>
-							<th>Booking Date</th>
-							<th>Receiver Name</th>
-							<th>Delivery Address</th>
-							<th>Amount</th>
-							<th>Status</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>#BN-12387</td>
-							<td>User_11rE221</td>
-							<td>24-02-2024</td>
-							<td>Amal Ramesh</td>
-							<td>12, Avenue Street, Grover, 234567</td>
-							<td>$2674.00</td>
-							<td><span class="badge badge-success">Delivered</span></td>
-						</tr>
-						<tr>
-							<td>#BN-13407</td>
-							<td>User_10rE101</td>
-							<td>21-01-2024</td>
-							<td>Akhil Raju</td>
-							<td>12, Avenue Street, Grover, 234567</td>
-							<td>$2674.00</td>
-							<td><span class="badge badge-success">In Transit</span></td>
-						</tr>
-						<tr>
-							<td>#BN-12487</td>
-							<td>User_aW4E221</td>
-							<td>14-02-2024</td>
-							<td>Anamya B</td>
-							<td>12, Avenue Street, Grover, 234567</td>
-							<td>$2674.00</td>
-							<td><span class="badge badge-success">Returned</span></td>
-						</tr>
-						<tr>
-							<td>#BN-19887</td>
-							<td>User_12wpv1</td>
-							<td>19-12-2023</td>
-							<td>Arjun B</td>
-							<td>12, Avenue Street, Grover, 234567</td>
-							<td>$2674.00</td>
-							<td><span class="badge badge-success">Picked Up</span></td>
-						</tr>
-					</tbody>
-				</table>
+		  <div class="table-responsive">
+		  <%
+			  ArrayList<Booking> al = new ArrayList<Booking>();
+	          BookingDao bd = new BookingDao();
+	          al = bd.getAllBooking();
+	          if(al == null || al.size() == 0){
+	        	  out.println("<p>No Records Found</p>");
+	          }
+	          else {
+	        	  out.write("<table><thead><tr><th>Booking ID</th><th>Sender Name</th><th>Sender Email</th><th>Booking Date</th><th>Receiver Name</th><th>Delivery Address</th><th>Amount</th><th>Status</th></tr></thead><tbody>");
+	        	  for(Booking bk:al){
+	                   out.println("<tr><td>"+bk.getBookingId()+"</td><td>"+bk.getSenderName()+"</td><td>"+bk.getSenderEmail()+"</td><td>"+bk.getBookingDate()+"</td><td>"+bk.getReceiverName()+"</td><td>"+bk.getReceiverAddress()+"</td><td>"+bk.getCost()+"</tb><td>"+bk.getStatus()+"</td></tr>");
+	               }
+	        	  out.write("</tbody></table>");
+	          }
+		  %>
 			</div>
 		</div>
 	</main>
 
 	<jsp:include page="../../adminfooter.html"></jsp:include>
-	<script src="script.js"></script>
+	<script src="/DropIt/admin/Tracking/"></script>
 </body>
 </html>

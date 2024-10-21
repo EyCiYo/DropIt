@@ -1,22 +1,4 @@
 
-
-function trackParcel(){
-    event.preventDefault(); 
-    var parcelId = document.forms["track-form"]["tracking-id"].value;
-    console.log("inside trackParcel: ",parcelId);
-    if(parcelId == ""){
-        alert("Please enter a tracking ID");
-    }
-    else{
-        var trackingResult = document.getElementById("tracking-result");
-        trackingResult.style.display = "block";
-        trackingResult.scrollIntoView({behavior: "smooth",block: "center"});
-        document.getElementById("current-location").innerHTML = "Bangalore";
-        document.getElementById("estimated-arrival").innerHTML = "10th May 2021";
-        startProgressBar(4);
-    }
-}
-
 function startProgressBar(value) {
 	
 	var progress = parseInt(value)

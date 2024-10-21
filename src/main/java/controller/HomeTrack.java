@@ -26,8 +26,18 @@ public class HomeTrack extends HttpServlet {
 		String bookingid = request.getParameter("tracking-id");
 		String email = request.getParameter("email");
 		HttpSession session = request.getSession(false);
-		String role = (session != null ? (String) session.getAttribute("role"):"");
-		RequestDispatcher rd = request.getRequestDispatcher("./hometracking.jsp");
+		String role = (session != null ? (String) session.getAttribute("role"):"noaccount");
+		RequestDispatcher rds = null;
+		RequestDispatcher rdf = null;
+		if(role.equals("admin")) {
+			rds = request.getRequestDispatcher("./admin/Tracking/index.jsp");
+			rdf = rds;
+		}
+		else if(role.equals("noaccount")) {
+			rds = request.getRequestDispatcher("./hometracking.jsp");
+			rdf = request.getRequestDispatcher("./index.jsp");
+		}
+		
 		
 		BookingDao bd = new BookingDao();
 		
@@ -41,14 +51,13 @@ public class HomeTrack extends HttpServlet {
 				request.setAttribute("deliverydate", deliveryDate);
 				request.setAttribute("bookingdate", bookingDate);
 				request.setAttribute("status", obj.getStatus());
-				rd.forward(request, response);
+				rds.forward(request, response);
 			}
 			else {
 				request.setAttribute("errorMessage", "No booking found with this ID");
 				request.setAttribute("tracking-id", bookingid);
 				request.setAttribute("email", email);
-				rd = request.getRequestDispatcher("./index.jsp");
-				rd.forward(request, response);
+				rdf.forward(request, response);
 			}
 		} catch (Exception e) {
 			logger.log(System.Logger.Level.INFO, e.getMessage());

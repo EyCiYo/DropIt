@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import bean.Booking;
 import dao.BookingDao;
@@ -27,6 +28,7 @@ public class PrintBill extends HttpServlet {
 		String bid = (String) request.getParameter("bookingid");
 		String billno = request.getParameter("billno");
 		BookingDao bd = new BookingDao();
+		HttpSession session = request.getSession(false);
 		
 		try {
 			Booking obj = bd.getBookingDetails(bid);
@@ -46,9 +48,10 @@ public class PrintBill extends HttpServlet {
 					+ "\n" + "Receiver Name: " + recName + "\n" 
 					+ "\nCost: " + cost + "\n");
 			writer.close();
-			String resp = "<script>alert(Bill stored at: "+filepath+");</script>";
-			request.setAttribute("response", resp);
-			request.getRequestDispatcher("./Bill/index.jsp").forward(request, response);
+			String resp = "<script>alert('Bill stored at: "+filepath+".');</script>";
+			response.getWriter().print(resp);
+			session.setAttribute("bookingid", null);
+			request.getRequestDispatcher("./index.jsp").forward(request, response);
 		} catch (Exception e) {
 			logger.log(System.Logger.Level.ERROR, e.getMessage());
 		}

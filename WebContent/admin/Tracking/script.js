@@ -1,23 +1,9 @@
-function trackParcel(){
-    event.preventDefault(); 
-    var parcelId = document.forms["track-form"]["tracking-id"].value;
-    console.log("inside trackParcel: ",parcelId);
-    if(parcelId == ""){
-        alert("Please enter a tracking ID");
-    }
-    else{
-        var trackingResult = document.getElementById("tracking-result");
-        trackingResult.style.display = "block";
-        trackingResult.scrollIntoView({behavior: "smooth",block: "center"});
-        document.getElementById("tracking-id").innerHTML = parcelId.toString();
-        document.getElementById("user-id").innerHTML = "User_1sW21";
-        document.getElementById("current-location").innerHTML = "Bangalore";
-        document.getElementById("estimated-arrival").innerHTML = "10th May 2021";
-        startProgressBar(4);
-    }
-}
 
-function startProgressBar(progress) {
+function startProgressBar(value) {
+    var progress = parseInt(value)
+    var trackingResult = document.getElementById("tracking-result");
+    trackingResult.style.display = "block";
+    trackingResult.scrollIntoView({behavior: "smooth",block: "center"});
     // Get all circles and bars
     const circles = document.querySelectorAll('.circle');
     const bars = document.querySelectorAll('.bar');
