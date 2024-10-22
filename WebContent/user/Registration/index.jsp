@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parcel Delivery - User Registration</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/DropIt/user/Registration/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -104,11 +104,16 @@
                     </div>
                     
                 </form>
+                <%
+                        String err = (String)request.getAttribute("errorMessage");
+                        if(err!=null){%>
+                        <script>alert("<%=err %>")</script><%} 
+                %>
             </div>
         </div>
         
     </main>
     <jsp:include page="../../footer.html"></jsp:include>
-    <script src="script.js"></script>
+    <script src="/DropIt/user/Registration/script.js"></script>
 </body>
 </html>

@@ -49,6 +49,7 @@ public class TrackParcel extends HttpServlet {
 				}
 			} catch (Exception e) {
 				System.getLogger(e.getMessage());
+				throw new ServletException(e);
 			}
 			finally {
 				System.getLogger("Completed tracking");

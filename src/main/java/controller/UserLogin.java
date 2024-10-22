@@ -58,9 +58,10 @@ public class UserLogin extends HttpServlet {
 					rd.forward(request, response);
 					break;
 			}			
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
 			
 			System.getLogger(e.getMessage());
+			throw new ServletException(e);
 		}
 	}
 

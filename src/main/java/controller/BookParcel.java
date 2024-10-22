@@ -79,6 +79,7 @@ public class BookParcel extends HttpServlet {
 			dropDate = dateFormat.parse(request.getParameter("drop-date")); // For dropoff date
 		} catch (ParseException e) {
 			logger.log(System.Logger.Level.ERROR,e.getMessage());
+			throw new ServletException(e);
 		}
 
 		// Status set to "Booked" when a new booking is created
@@ -131,8 +132,9 @@ public class BookParcel extends HttpServlet {
 			request.setAttribute("bookingid", bid);
 			RequestDispatcher rd = request.getRequestDispatcher("./Payment/index.jsp");
 			rd.forward(request, response);
-		} catch (ClassNotFoundException e) {
-			logger.log(System.Logger.Level.INFO,e.getMessage());
+		} catch (Exception e) {
+			logger.log(System.Logger.Level.WARNING,e.getMessage());
+			throw new ServletException(e);
 		}
 	}
 

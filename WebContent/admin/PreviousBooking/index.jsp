@@ -21,9 +21,11 @@
 	<%
 	session = request.getSession(false);
 	String name = null;
-	String email = null;
+	String email = (String)request.getAttribute("email");
 	String mobile = null;
 	String uid = null;
+	String errorMessage = (String)request.getAttribute("errorMessage");
+	
 	ArrayList<Booking> al = new ArrayList<Booking>();
 	UserDao ud = new UserDao();
 	if (session == null || session.getAttribute("username") == null) {
@@ -34,24 +36,26 @@
 		if(request.getAttribute("bookingList")!= null && request.getAttribute("email")!=null){
 			try{
 				al = (ArrayList<Booking>)request.getAttribute("bookingList");
-				User obj = ud.getUser(email);
-				if(al!=null || al.size() !=0){%>
+				if(al!=null){
+					User obj = ud.getUser(email);
+	                name = obj.getName();
+	                mobile = obj.getMobile();
+	                uid = obj.getUserID();
+				%>
 					<script>
 					   window.onload = function(){
 						   getHistory();
 					   }
 					</script>
 				<%}
-				else{%>
-					<script>
-                       window.onload = function(){
-                           document.getElementById('error').innerHTML = "No entries Found";
-                       }
-                    </script>
-				<%}
+				else{
+					errorMessage = "No Records found for this user";
+					out.println(errorMessage);
+				}
 			}
 			catch(ClassCastException e){
 				e.printStackTrace();
+				throw new ServletException(e);
 			}
 			
 		}
@@ -67,17 +71,17 @@
 			<div class="tracking-container">
 				<div class="tracking-form">
 					<h1>Enter user details</h1>
-					<form action="../../PreviousBookings" name="update-form"
+					<form action="/DropIt/PreviousBookings" name="update-form"
 						method="post">
 						<div class="input-data">
 							<input type="email" name="email" id="email"
 								placeholder="Enter your Email Id" required> <label
 								for="fromdate">From Date:</label> <input type="date"
 								name="fromdate" id="fromdate" placeholder="Enter start date"
-								required> <label for="fromdate">To Date:</label> <input
+								required> <label for="todate">To Date:</label> <input
 								type="date" name="todate" id="todate"
-								placeholder="Enter to date" disabled>
-								<p id="error" style="color:red"></p>
+								placeholder="Enter to date" disabled required>
+								<p id="error" style="color:red"><%=errorMessage!=null?errorMessage:"" %></p>
 						</div>
 						<div class="track-btn">
 							<button type="submit">
@@ -96,21 +100,21 @@
 		<div class="previous-details" id="previous-details">
 			<div class="user-details">
 				<h3 class="hanging-text">User Details:</h3>
-				<div style="display: flex; gap: 0.25rem">
+				<div style="display: flex; gap: 0.25rem;">
 					<h4>User ID:</h4>
-					<span id="uid">User_stEr43L9d</span>
+					<span id="uid"><%=uid %></span>
 				</div>
 				<div style="display: flex; gap: 0.25rem">
 					<h4>Name:</h4>
-					<span id="name">John Doe</span>
+					<span id="name"><%=name %></span>
 				</div>
 				<div style="display: flex; gap: 0.25rem">
 					<h4>Email ID:</h4>
-					<span id="email">john@gmail.com</span>
+					<span id="email"><%=email %></span>
 				</div>
 				<div style="display: flex; gap: 0.25rem">
 					<h4>Mobile:</h4>
-					<span id="mobile">1234567890</span>
+					<span id="mobile"><%=mobile %></span>
 				</div>
 			</div>
 			<h2>Previous Booking Details</h2>

@@ -1,25 +1,3 @@
-document.getElementById("login-btn").addEventListener("mouseenter",(event)=>{
-    var loginDropdown = document.getElementById("login-dropdown")
-    loginDropdown.style.display = "block";
-    document.getElementById("login-chevron").classList.add('chevron-rotate');
-})
-
-document.getElementById("login-btn").addEventListener("mouseleave",(event)=>{
-    var loginDropdown = document.getElementById("login-dropdown")
-    loginDropdown.style.display = "none";
-    document.getElementById("login-chevron").classList.remove('chevron-rotate');
-})
-document.getElementById("support-btn").addEventListener("mouseenter",(event)=>{
-    var supportDropdown = document.getElementById("support-dropdown")
-    supportDropdown.style.display = "block";
-    document.getElementById("support-chevron").classList.add('chevron-rotate');
-})
-
-document.getElementById("support-btn").addEventListener("mouseleave",(event)=>{
-    var supportDropdown = document.getElementById("support-dropdown")
-    supportDropdown.style.display = "none";
-    document.getElementById("support-chevron").classList.remove('chevron-rotate');
-})
 
 const numberFieldSender = document.getElementById('sendermobile');
 const numberFieldReceiver = document.getElementById('recmobile');
@@ -161,3 +139,26 @@ function calculateCost() {
 function bookParcel() {
     return validateForm(); // Prevent form submission if validation fails
 }
+
+var pickupdate = document.getElementById('pickup-date');
+var dropoffdate = document.getElementById('drop-date');
+const currDate = new Date().toISOString().split('T')[0];
+pickupdate.setAttribute('min',currDate);
+dropoffdate.disabled = true;
+pickupdate.addEventListener('change', function() {
+    if (pickupdate.value) {
+
+        dropoffdate.disabled = false;
+        let selectedDate = new Date(pickupdate.value)
+        selectedDate.setDate(selectedDate.getDate()+2)
+        let minDate = selectedDate.toISOString().split('T')[0];
+        dropoffdate.setAttribute('min', minDate);
+
+        if (dropoffdate.value && dropoffdate.value < pickupdate.value) {
+            dropoffdate.value = '';
+        }
+    } else {
+        dropoffdate.disabled = true;
+        dropoffdate.value = ''; 
+    }
+});

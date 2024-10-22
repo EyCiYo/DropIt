@@ -20,74 +20,8 @@ import dao.UserDao;
 @WebServlet("/UserReg")
 public class UserReg extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private String validateUserReg(User obj) {
-		
-		        String name = obj.getName();
-		        String address = obj.getAddress();
-		        String email =obj.getEmail();
-		        String mobile =obj.getMobile();
-		        String password =obj.getPassword();
-		        String cpassword = obj.getPassword();
-		        
-
-		        // Basic validation
-		        if (name.isEmpty() || address.isEmpty() || email.isEmpty() || mobile.isEmpty() || password.isEmpty() || cpassword.isEmpty()) {
-		            return "Please fill in all the required fields.";
-		        }
-		        
-		        if (name.length() > 30){
-		            return "Maximum length of name allowed is 30.";
-		        } else if (name.length() < 5) {
-		            return "Minimum length of name allowed is 5.";
-		        }
-		        
-		        // Email validation
-		        if (!validateEmail(email)) {
-		           
-		            return("Please enter a valid email address.");
-		        }
-		        
-		        // Password validation
-		        if (!pswCheck(password)) {
-		           
-		            return("Please follow password creation criteria.");
-		        } else if (!password.equals(cpassword)) {
-		           
-		            return("Password and Confirm password need to be the same.");
-		        }
-		        
-		        // Mobile number validation (10 digits)
-		        if (!validateMobile(mobile)) {
-		           
-		            return("Please enter a valid mobile number (10 digits).");
-		        }
-		        
-		        // If validation passes
-		        return("Registration successful!");		   
-		        }
-	private boolean validateEmail(String email) {
-	    String emailPattern = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
-	    return Pattern.matches(emailPattern, email);
-	}
-
-	  private boolean validateMobile(String mobile) {
-	        String mobilePattern = "^\\d{10}$";
-	        return Pattern.matches(mobilePattern, mobile);
-	    }
-	  private boolean pswCheck(String password) {
-	        String upperCaseLetters = ".*[A-Z].*";
-	        String lowerCaseLetters = ".*[a-z].*";
-	        String numbers = ".*[0-9].*";
-	        
-	        if (password.length() < 8 || password.length() > 16 || !password.matches(numbers)||!password.matches(upperCaseLetters)||!password.matches(lowerCaseLetters)) {
-	            return false;
-	        } 
-	        else {
-	            return true;
-	        }
-	    }
+	System.Logger logger = System.getLogger("error");
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.getLogger("Called Reg servlet Post");
 		User obj = new User();
 		obj.setUserID(request.getParameter("username"));
 		obj.setName(request.getParameter("full_name"));
@@ -104,19 +38,27 @@ public class UserReg extends HttpServlet {
 				obj.setSmsNotifications(true);
 			}
 		}
+		
 		UserDao ud = new UserDao();
+		String err = ud.validateUserReg(obj);
+		if(!err.equals("Success")) {
+			request.setAttribute("errorMessage", err);
+			System.out.println("Error in validation");
+			RequestDispatcher rd = request.getRequestDispatcher("./user/Registration/index.jsp");
+			rd.forward(request, response);
+		}
 		try {
 			if(ud.createUser(obj)) {
 				System.getLogger("User Created Successfully");
 				response.sendRedirect("./user/Home/index.jsp");
 			}else {
-				PrintWriter out = response.getWriter();
-				out.println("<script>alert(\"Not Success\")</script>");
+				request.setAttribute("errorMessage", "Error While creating User");
 				RequestDispatcher rd = request.getRequestDispatcher("./user/Registration/index.jsp");
-				rd.include(request, response);
+				rd.forward(request, response);
 			}
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
 			System.getLogger(e.getMessage());
+			throw new ServletException(e);
 		}
 		
 	}

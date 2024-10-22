@@ -30,8 +30,8 @@
             RequestDispatcher rd = getServletContext().getRequestDispatcher(request.getContextPath()+"/");
             rd.forward(request, response);
         }
-        else if (session!=null && session.getAttribute("role").equals("admin")){
-            response.sendRedirect(request.getContextPath()+"/admin/Home/index.jsp");
+        else if (session!=null && session.getAttribute("role").equals("user")){
+            response.sendRedirect(request.getContextPath()+"/user/Home/index.jsp");
         }
         else{
             username = (String)request.getAttribute("username");
@@ -77,7 +77,7 @@
 					<h1>
 						Track your <span style="color: var(--dark-blue);">order</span>
 					</h1>
-					<form action="../../HomeTrack" name="track-form">
+					<form action="/DropIt/HomeTrack" name="track-form" method="post">
 						<div class="input-data">
 							<input type="text" name="tracking-id"
 								placeholder="Enter your Tracking Id"
@@ -86,9 +86,8 @@
 								type="email" name="email" id="email"
 								placeholder="Enter your Email Id" 
 								value="<%=request.getAttribute("email")!=null?request.getAttribute("email"):"" %>" required>
-							<div class="underline"></div>
-						</div><br>
-						<p id="error" style="color:red;"></p>
+						</div>
+						<p id="error" style="color:red;"><%=errorMessage!=null?errorMessage:"" %></p>
 						<div class="track-btn">
 							<button type="submit">
 								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -172,6 +171,6 @@
 	</main>
 
 	<jsp:include page="../../adminfooter.html"></jsp:include>
-	<script src="/DropIt/admin/Tracking/"></script>
+	<script src="/DropIt/admin/Tracking/script.js"></script>
 </body>
 </html>

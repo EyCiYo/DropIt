@@ -62,6 +62,6 @@
 
 
 
-    <script src="script.js"></script>
+    <script src="/DropIt/user/Home/script.js"></script>
 </body>
 </html>

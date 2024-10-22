@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DropIt - Admin</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/DropIt/admin/Home/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -19,7 +19,6 @@
 		response.sendRedirect(request.getContextPath() + "/");
 	} else if (session != null) {
 		if (session.getAttribute("role").equals("user")) {
-
 			response.sendRedirect(request.getContextPath() + "/user/Home/index.jsp");
 		}
 	}
@@ -35,9 +34,14 @@
             <div class="tracking-container">
                 <div class="tracking-form">
                     <h1>Track your <span style="color: var(--primary-emp-text);">order</span></h1>
-                    <form action="" name="track-form" onsubmit="return trackParcel()">
+                    <form action="/DropIt/HomeTrack" name="track-form" method="post">
                         <div class="input-data">
-                            <input type="text" name="tracking-id" id="tracking-id" placeholder="Enter your Tracking Id" required>       
+                            <input type="text" name="tracking-id" id="tracking-id" placeholder="Enter your Tracking Id"
+                            value="<%=request.getAttribute("tracking-id")!=null?request.getAttribute("tracking-id"):"" %>" required>       
+                            <input
+                                type="email" name="email" id="email"
+                                placeholder="Enter your Email Id" 
+                                value="<%=request.getAttribute("email")!=null?request.getAttribute("email"):"" %>" required>
                         </div>
                         <div class="track-btn">
                             <button type="submit">
@@ -58,6 +62,6 @@
     <jsp:include page="../../adminfooter.html"></jsp:include>
 
 
-    <script src="script.js"></script>
+    <script src="/DropIt/admin/Home/script.js"></script>
 </body>
 </html>

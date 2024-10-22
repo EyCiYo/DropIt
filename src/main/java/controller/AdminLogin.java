@@ -46,7 +46,8 @@ public class AdminLogin extends HttpServlet {
 				session.setAttribute("username", username);
 				session.setAttribute("role", "admin");
 				System.out.println("Session created for admin: "+session.getAttribute("username"));
-				response.sendRedirect("./admin/Home/index.jsp");
+				request.getRequestDispatcher("./admin/Home/index.jsp").forward(request, response);
+				break;
 			case -1:
 				request.setAttribute("errorMessage", "User Not found. Please Register");
 				rd.forward(request, response);
@@ -59,6 +60,7 @@ public class AdminLogin extends HttpServlet {
 		}
 		catch (Exception e) {
 			System.getLogger(e.getMessage());
+			throw new ServletException(e);
 		}
 		finally {
 			

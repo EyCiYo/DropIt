@@ -4,10 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import javax.servlet.ServletException;
+
 import bean.Admin;
 
 public class AdminDao {
-	public int adminLogin(Admin obj) throws ClassNotFoundException {
+	public int adminLogin(Admin obj) throws Exception {
 		int result = 0;
 		Connect_jdbc cj = new Connect_jdbc();
 		Connection conn = cj.connected();
@@ -30,11 +32,14 @@ public class AdminDao {
 				result = -1;
 				System.out.println("No user found");
 			}
-			conn.close();
 			ps.close();
 		}
 		catch (Exception e) {
-			System.getLogger(e.getMessage());
+			System.out.println(e.getMessage());
+			throw new ServletException(e);
+		}
+		finally {
+			cj.closeConnection();
 		}
 		return result;
 	}

@@ -7,8 +7,8 @@ public class User {
     private String mobileNumber;
     private String password;
     private String address;
-    private boolean emailNotifications;
-    private boolean smsNotifications;
+    private boolean emailNotifications = false;
+    private boolean smsNotifications = false;
     public User() {}
     public User(String name, String email, String address, String mobileNumber, String password,
         boolean emailNotifications, boolean smsNotifications) {

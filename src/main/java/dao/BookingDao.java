@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletException;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -119,7 +120,7 @@ public class BookingDao {
 		return username.toString();
 	}
 
-	public ArrayList<Booking> getPreviousBooking(String email) throws ClassNotFoundException, SQLException {
+	public ArrayList<Booking> getPreviousBooking(String email) throws Exception {
 		Connect_jdbc cj = new Connect_jdbc();
 		Connection conn = cj.connected();
 		ArrayList<Booking> arr = new ArrayList<>();
@@ -151,24 +152,30 @@ public class BookingDao {
 				logger.log(System.Logger.Level.ERROR,"Error in fetching Previous Booking data");
 			}
 
-			conn.close();
 			st.close();
 		} catch (Exception e) {
 			logger.log(System.Logger.Level.WARNING,e.getMessage());
+			throw new ServletException(e);
+		}
+		finally {
+			cj.closeConnection();
 		}
 
 		return arr;
 	}
 	
-	public ArrayList<Booking> getPreviousBooking(String email,Date from,Date to) throws ClassNotFoundException, SQLException {
+	public ArrayList<Booking> getPreviousBooking(String email,Date from,Date to) throws Exception {
 		Connect_jdbc cj = new Connect_jdbc();
 		Connection conn = cj.connected();
 		ArrayList<Booking> arr = new ArrayList<>();
+		System.out.println(email+from+to);
 		String sql = "select * from tbl_Booking where Sender_Email=? AND par_bookingtime BETWEEN ? AND ?";
 
 		try {
 			java.sql.Date sqlFromDate = new java.sql.Date(from.getTime());
 			java.sql.Date sqlToDate = new java.sql.Date(to.getTime());
+			System.out.println(sqlToDate);
+			System.out.println(sqlFromDate);
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setString(1, email);
 			st.setDate(2, sqlFromDate);
@@ -186,7 +193,9 @@ public class BookingDao {
 				match1.setCost(rs.getDouble("Par_Cost"));
 				match1.setStatus(rs.getString("Par_Status"));
 				match1.setSenderEmail(rs.getString("Sender_email"));
+				match1.setDropoffDate(rs.getDate("Par_Dropofftime"));
 				arr.add(match1);
+				System.out.println("Fetched data ");
 				rowcount++;
 			}
 			if (rowcount > 0) {
@@ -195,17 +204,19 @@ public class BookingDao {
 				arr = null;
 				logger.log(System.Logger.Level.ERROR,"Error in fetching Previous Booking data");
 			}
-
-			conn.close();
 			st.close();
 		} catch (Exception e) {
 			logger.log(System.Logger.Level.WARNING,e.getMessage());
+			throw new ServletException(e);
+		}
+		finally {
+			cj.closeConnection();
 		}
 
 		return arr;
 	}
 
-	public Booking getTracking(String bid, String email) throws ClassNotFoundException {
+	public Booking getTracking(String bid, String email) throws Exception {
 		Connect_jdbc cj = new Connect_jdbc();
 		Connection conn = cj.connected();
 		Booking match = new Booking();
@@ -227,17 +238,20 @@ public class BookingDao {
 				match = null;
 				logger.log(System.Logger.Level.ERROR,"No match found");
 			}
-			conn.close();
 			st.close();
 			logger.log(System.Logger.Level.INFO,"Clossed connection");
 		} catch (Exception e) {
 			logger.log(System.Logger.Level.WARNING,e.getMessage());
+			throw new ServletException(e);
+		}
+		finally {
+			cj.closeConnection();
 		}
 
 		return match;
 	}
 
-	public String createNewBooking(Booking obj) throws ClassNotFoundException {
+	public String createNewBooking(Booking obj) throws Exception {
 		Connect_jdbc cj = new Connect_jdbc();
 		Connection conn = cj.connected();
 		String rbid = null;
@@ -306,17 +320,20 @@ public class BookingDao {
 			} else {
 				logger.log(System.Logger.Level.ERROR,"Booking data not inserted");
 			}
-			conn.close();
 			ps.close();
 			chk.close();
 			chkrs.close();
 		} catch (Exception e) {
 			logger.log(System.Logger.Level.WARNING,e.getMessage());
+			throw new ServletException(e);
+		}
+		finally {
+			cj.closeConnection();
 		}
 		return rbid;
 	}
 	
-	public Booking getBookingDetails(String bookingId) throws ClassNotFoundException {
+	public Booking getBookingDetails(String bookingId) throws Exception {
 	    Connect_jdbc cj = new Connect_jdbc();
 	    Connection conn = cj.connected();
 	    Booking booking = null;
@@ -365,15 +382,18 @@ public class BookingDao {
 	        // Close resources
 	        rs.close();
 	        ps.close();
-	        conn.close();
 	    } catch (Exception e) {
 	        logger.log(System.Logger.Level.WARNING, e.getMessage());
+	        throw new ServletException(e);
 	    }
+	    finally {
+			cj.closeConnection();
+		}
 	    
 	    return booking;
 	}
 	
-	public double getBookingPrice(String bookingId) throws ClassNotFoundException {
+	public double getBookingPrice(String bookingId) throws Exception {
 	    Connect_jdbc cj = new Connect_jdbc();
 	    Connection conn = cj.connected();
 	    double price = -1;  // Initialize with a default value (-1) indicating that the booking is not found
@@ -395,15 +415,19 @@ public class BookingDao {
 	        // Close resources
 	        rs.close();
 	        ps.close();
-	        conn.close();
+
 	    } catch (Exception e) {
 	        logger.log(System.Logger.Level.WARNING, e.getMessage());
+	        throw new ServletException(e);
 	    }
+	    finally {
+	        cj.closeConnection();
+		}
 	    
 	    return price;
 	}
 	
-	public boolean deleteBooking(String bookingId) throws ClassNotFoundException {
+	public boolean deleteBooking(String bookingId) throws Exception {
 		Connect_jdbc cj = new Connect_jdbc();
 	    Connection conn = cj.connected();
 	    boolean success = false;
@@ -417,20 +441,21 @@ public class BookingDao {
 	    		logger.log(System.Logger.Level.INFO , "Deleted the booking entry");
 	    	}
 	    	ps.close();
-	    	conn.close();
+	    	
 	    }
 	    catch (Exception e) {
 			logger.log(System.Logger.Level.WARNING , e.getMessage());
+			throw new ServletException(e);
 		}
 	    finally {
-	    	
+	    	cj.closeConnection();
 	    }
 	    
 	    return success;
 	}
 	
 	
-	public ArrayList<Booking> getAllBooking() throws ClassNotFoundException {
+	public ArrayList<Booking> getAllBooking() throws Exception {
 		ArrayList<Booking> al = new ArrayList<Booking>();
 		Connect_jdbc cj = new Connect_jdbc();
 	    Connection conn = cj.connected();
@@ -453,8 +478,68 @@ public class BookingDao {
 	    	}
 	    }catch (Exception e) {
 			logger.log(System.Logger.Level.WARNING, e.getMessage());
+			throw new ServletException(e);
+		}
+	    finally {
+			cj.closeConnection();
 		}
 		return al;
+	}
+	
+	public boolean schedulePickup(String bookingid, Date newDate) throws Exception {
+		boolean result = false;
+		Connect_jdbc cj = new Connect_jdbc();
+	    Connection conn = cj.connected();
+	    java.sql.Date sqlNewDate = new java.sql.Date(newDate.getTime());
+	    String sql = "UPDATE tbl_Booking SET Par_PickupTime = ? WHERE Booking_id = ?";
+	    try {
+	    	PreparedStatement ps = conn.prepareStatement(sql);
+	    	ps.setDate(1,sqlNewDate );
+	    	ps.setString(2, bookingid);
+	    	int rowcount = ps.executeUpdate();
+	    	if(rowcount > 0) {
+	    		result = true;
+	    		logger.log(System.Logger.Level.INFO, "Updated date in table");
+	    	}
+	    }
+	    catch (Exception e) {
+			logger.log(System.Logger.Level.WARNING, e.getMessage());
+			throw new ServletException(e);
+		}
+	    finally {
+	    	cj.closeConnection();
+		}
+	    		
+		return result;
+	}
+	
+	public boolean updateStatus(String bookingid,String newStatus) throws Exception {
+		Connect_jdbc cj = new Connect_jdbc();
+	    Connection conn = cj.connected();
+	    boolean result = false;
+	    String sql = "UPDATE tbl_Booking SET Par_Status = ? WHERE Booking_id = ?";
+	    try {
+	    	PreparedStatement ps = conn.prepareStatement(sql);
+	    	ps.setString(1, newStatus);
+	    	ps.setString(2, bookingid);
+	    	int rowcount = ps.executeUpdate();
+	    	if(rowcount>0) {
+	    		result = true;
+	    		logger.log(System.Logger.Level.INFO, "Updated Parcel Status");
+	    	}
+	    	else {
+	    		logger.log(System.Logger.Level.ERROR, "Error Updating Status");
+	    	}
+	    	ps.close();
+	    }
+	    catch (Exception e) {
+			logger.log(System.Logger.Level.WARNING, e.getMessage());
+			throw new ServletException(e);
+		}
+	    finally {
+			cj.closeConnection();
+		}
+	    return result;
 	}
 
 }

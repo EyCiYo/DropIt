@@ -51,6 +51,7 @@ public class MakePayment extends HttpServlet {
 			}
 		} catch (ParseException e) {
 			logger.log(System.Logger.Level.WARNING, e.getMessage());
+			throw new ServletException(e);
 		} 
 		finally {
 			

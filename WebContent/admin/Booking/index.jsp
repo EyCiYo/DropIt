@@ -29,7 +29,7 @@
     <main>
         <h1>Package Details</h1><br>
         <div class="booking-form">
-            <form action="../../BookParcel" method="post" >
+            <form action="/DropIt/BookParcel" method="post" >
                 <div class="sender-info">
                     <div class="hanging-title">Pickup From:</div>
                     <label for="sendername">Name: </label><input type="text" name="sendername" id="sendername" placeholder="Sender Name" required >
@@ -50,16 +50,16 @@
                 <div class="parcel-details">
                     <div class="hanging-title">Parcel Details:</div>
                     <div class="length cflex">
-                        <label for="length">Length: </label><input type="number" name="length" id="length" placeholder="0cm" required>
+                        <label for="length">Length: </label><input type="number" name="length" step="0.01" min="0" id="length" placeholder="0cm" required>
                     </div>
                     <div class="breadth cflex">
-                        <label for="breadth">Breadth: </label><input type="number" name="breadth" id="breadth" placeholder="0cm" required>
+                        <label for="breadth">Breadth: </label><input type="number" name="breadth" step="0.01" min="0" id="breadth" placeholder="0cm" required>
                     </div>
                     <div class="height cflex">
-                        <label for="height">Height: </label><input type="number" name="height" id="height" placeholder="0cm" required>
+                        <label for="height">Height: </label><input type="number" name="height" step="0.01" min="0" id="height" placeholder="0cm" required>
                     </div>
                     <div class="weight cflex">
-                        <label for="weight">Weight: </label><input type="number" name="weight" id="weight" placeholder="0kg" required>
+                        <label for="weight">Weight: </label><input type="number" name="weight" step="0.01" min="0" id="weight" placeholder="0kg" required>
                     </div>
                     <div class="description cflex">
                         <label for="description">Content Description: </label><textarea name="description" id="description" cols="30" rows="3" placeholder="Description about the contents of the parcel"></textarea>
@@ -107,9 +107,9 @@
                         </div>
                     </div>
                     <label for="date">Prefered Pickup Date: </label>
-                    <input type="datetime-local" name="pickup-date" id="pickup-date" required>
+                    <input type="date" name="pickup-date" id="pickup-date" required>
                     <label for="date">Prefered Dropoff Date: </label>
-                    <input type="datetime-local" name="drop-date" id="drop-date" required>
+                    <input type="date" name="drop-date" id="drop-date" required>
                 </div>
                 <div class="cost-display">
                     <label for="esimatedcost"><b>Estimated Cost:</b></label>

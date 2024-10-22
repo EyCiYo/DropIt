@@ -46,6 +46,4 @@ Par_Status VARCHAR(20) NOT NULL);
 
 
  
- UPDATE TBL_BOOKING SET PAR_STATUS ='Booked' where booking_id = 'BKNO_a1B2c3D4';
- UPDATE TBL_BOOKING SET PAR_STATUS ='In Transit' where booking_id = 'BKNO_f5G6h7I8';
  

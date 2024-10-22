@@ -26,7 +26,7 @@ public class HomeTrack extends HttpServlet {
 		String bookingid = request.getParameter("tracking-id");
 		String email = request.getParameter("email");
 		HttpSession session = request.getSession(false);
-		String role = (session != null ? (String) session.getAttribute("role"):"noaccount");
+		String role = (session.getAttribute("role") != null ? (String) session.getAttribute("role"):"noaccount");
 		RequestDispatcher rds = null;
 		RequestDispatcher rdf = null;
 		if(role.equals("admin")) {
@@ -45,6 +45,7 @@ public class HomeTrack extends HttpServlet {
 			Booking obj = bd.getTracking(bookingid,email);
 			if(obj != null) {
 				request.setAttribute("bookingid", obj.getBookingId());
+				request.setAttribute("username", email);
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				String deliveryDate = sdf.format(obj.getDropoffDate());
 				String bookingDate = sdf.format(obj.getBookingDate());
@@ -61,6 +62,7 @@ public class HomeTrack extends HttpServlet {
 			}
 		} catch (Exception e) {
 			logger.log(System.Logger.Level.INFO, e.getMessage());
+			throw new ServletException(e);
 		}
 		finally {
 			logger.log(System.Logger.Level.INFO,"Completed tracking");

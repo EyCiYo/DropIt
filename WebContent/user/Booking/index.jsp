@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/user/Booking/style.css">
+    <link rel="stylesheet" href="/DropIt/user/Booking/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -73,16 +73,16 @@
                 <div class="parcel-details">
                     <div class="hanging-title">Parcel Details:</div>
                     <div class="length cflex">
-                        <label for="length">Length: </label><input type="number" name="length" id="length" placeholder="0cm" value="<%=request.getAttribute("length")!=null?request.getAttribute("length"):"" %>" required>
+                        <label for="length">Length: </label><input type="number" name="length" step="0.01" min="0" id="length" placeholder="0cm" value="<%=request.getAttribute("length")!=null?request.getAttribute("length"):"" %>" required>
                     </div>
                     <div class="breadth cflex">
-                        <label for="breadth">Breadth: </label><input type="number" name="breadth" id="breadth" placeholder="0cm" required>
+                        <label for="breadth">Breadth: </label><input type="number" name="breadth" step="0.01" min="0" id="breadth" placeholder="0cm" value="<%=request.getAttribute("breadth")!=null?request.getAttribute("breadth"):"" %>" required>
                     </div>
                     <div class="height cflex">
-                        <label for="height">Height: </label><input type="number" name="height" id="height" placeholder="0cm" required>
+                        <label for="height">Height: </label><input type="number" name="height" step="0.01" min="0" id="height" placeholder="0cm" value="<%=request.getAttribute("height")!=null?request.getAttribute("height"):"" %>" required>
                     </div>
                     <div class="weight cflex">
-                        <label for="weight">Weight: </label><input type="number" name="weight" id="weight" placeholder="0kg" required>
+                        <label for="weight">Weight: </label><input type="number" name="weight" step="0.01" min="0" id="weight" placeholder="0kg"value="<%=request.getAttribute("weight")!=null?request.getAttribute("weight"):"" %>" required>
                     </div>
                     <div class="description cflex">
                         <label for="description">Content Description: </label><textarea name="description" id="description" cols="30" rows="3" placeholder="Description about the contents of the parcel"></textarea>
@@ -130,9 +130,9 @@
                         </div>
                     </div>
                     <label for="date">Prefered Pickup Date: </label>
-                    <input type="datetime-local" name="pickup-date" id="pickup-date" required>
+                    <input type="date" name="pickup-date" id="pickup-date" required>
                     <label for="date">Prefered Dropoff Date: </label>
-                    <input type="datetime-local" name="drop-date" id="drop-date" required>
+                    <input type="date" name="drop-date" id="drop-date" required>
                 </div>
                 <div class="cost-display">
                     <label for="esimatedcost"><b>Estimated Cost:</b></label>
@@ -167,6 +167,6 @@
 
     
 	<jsp:include page="../../userfooter.html"></jsp:include>
-    <script src="${pageContext.request.contextPath}/user/Booking/script.js"></script>
+    <script src="/DropIt/user/Booking/script.js"></script>
 </body>
 </html>

@@ -19,9 +19,6 @@ public class CancelPayment extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	System.Logger logger = System.getLogger("error");
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String bookingId = request.getParameter("bookingId");
 		System.out.println(bookingId);
@@ -40,8 +37,7 @@ public class CancelPayment extends HttpServlet {
 				response.sendRedirect("./index.jsp");
 			}
 		} catch (Exception e) {
-			
-			
+			throw new ServletException(e);
 		}
 	}
 

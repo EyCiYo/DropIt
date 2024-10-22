@@ -26,21 +26,27 @@ public class PreviousBookings extends HttpServlet {
 		String email = request.getParameter("email");
 		String fromdate = request.getParameter("fromdate");
 		String todate = request.getParameter("todate");
-		
+		System.out.println(fromdate+todate);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		BookingDao bd = new BookingDao();
 		ArrayList<Booking> al = new ArrayList<Booking>();
 		Date fromDate = null;
-		Date toDate = null;
+		Date toDate = new Date();
 		try {
 			fromDate = sdf.parse(fromdate);
-			toDate = sdf.parse(todate);
+			if(!todate.equals("")) {
+				toDate = sdf.parse(todate);
+			}
 			al = bd.getPreviousBooking(email, fromDate, toDate);
+			if(al == null) {
+				request.setAttribute("errorMessage", "No values found for this user.");
+			}
 			request.setAttribute("bookingList", al);
 			request.setAttribute("email", email);
 			request.getRequestDispatcher("./admin/PreviousBooking/index.jsp").forward(request, response);
 		} catch (Exception e) {
 			logger.log(System.Logger.Level.WARNING, e.getMessage());
+			throw new ServletException(e);
 		}
 		
 	}

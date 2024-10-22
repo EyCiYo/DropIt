@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <title>User Login</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/user/Login/style.css">
+    <link rel="stylesheet" href="/DropIt/user/Login/style.css">
 </head>
 <body>
 	<%
@@ -84,6 +84,6 @@
     
 
     <jsp:include page="/footer.html"></jsp:include>
-    <script src="${pageContext.request.contextPath}/user/Login/script.js"></script>
+    <script src="/DropIt/user/Login/script.js"></script>
 </body>
 </html>

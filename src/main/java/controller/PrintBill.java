@@ -54,6 +54,7 @@ public class PrintBill extends HttpServlet {
 			request.getRequestDispatcher("./index.jsp").forward(request, response);
 		} catch (Exception e) {
 			logger.log(System.Logger.Level.ERROR, e.getMessage());
+			throw new ServletException(e);
 		}
 
 	}
